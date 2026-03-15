@@ -1,0 +1,418 @@
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body,div,span,p,h1,h2,button{font-family:var(--font-sans)}
+:root{
+  --accent:#4f46e5;--accent-soft:#eef0ff;
+  --sb-bg:#1e1b3a;--sb-w:210px;
+  --border:var(--color-border-tertiary);
+  --surface:var(--color-background-primary);
+  --bg:var(--color-background-secondary);
+  --txt:var(--color-text-primary);
+  --muted:var(--color-text-secondary);
+  --h:580px;
+}
+
+/* ── SHELL: fixed height container, pages swap inside ── */
+#shell{
+  position:relative;
+  width:100%;
+  height:var(--h);
+  overflow:hidden;
+}
+
+/* every page fills the shell exactly */
+.pg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow-y:auto;
+  background:var(--bg);
+  /* hidden by default */
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(12px);
+  transition:opacity .25s ease, transform .25s ease;
+}
+/* active page is visible */
+.pg.on{
+  opacity:1;
+  pointer-events:all;
+  transform:translateY(0);
+}
+
+/* ── HOME ── */
+#home{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;
+  padding:44px 24px 36px;overflow:hidden;
+}
+.blob1,.blob2{
+  position:absolute;border-radius:50%;
+  filter:blur(60px);opacity:.22;pointer-events:none;z-index:0;
+}
+.blob1{width:300px;height:300px;background:radial-gradient(#c7d2fe,#818cf8);top:-70px;right:-50px}
+.blob2{width:240px;height:240px;background:radial-gradient(#fde68a,#f9a8d4);bottom:10px;left:-40px}
+
+#home > *{position:relative;z-index:1}
+
+.eye{
+  display:inline-block;background:var(--accent-soft);color:var(--accent);
+  font-size:10px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;
+  padding:4px 12px;border-radius:100px;margin-bottom:16px;
+}
+#home h1{
+  font-size:clamp(24px,5vw,38px);font-weight:500;color:var(--txt);
+  line-height:1.15;letter-spacing:-.5px;margin-bottom:10px;
+}
+#home h1 em{font-style:italic;color:var(--accent)}
+#home .sub{
+  font-size:13px;color:var(--muted);line-height:1.65;
+  max-width:360px;margin:0 auto 24px;
+}
+.cta-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
+
+.btn-p{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--accent);color:#fff;font-size:13px;font-weight:500;
+  padding:9px 20px;border-radius:100px;border:none;cursor:pointer;
+  transition:background .15s,transform .15s;
+}
+.btn-p:hover{background:#4338ca;transform:translateY(-2px)}
+.btn-o{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface);color:var(--txt);font-size:13px;font-weight:500;
+  padding:9px 20px;border-radius:100px;
+  border:.5px solid var(--color-border-secondary);cursor:pointer;
+  transition:border-color .15s,color .15s,transform .15s;
+}
+.btn-o:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+
+.feat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:9px;
+  width:100%;max-width:640px;
+}
+.fc{
+  background:var(--surface);border:.5px solid var(--border);
+  border-radius:var(--border-radius-lg);padding:13px;text-align:left;
+  transition:border-color .15s,transform .15s;
+}
+.fc:hover{border-color:var(--accent);transform:translateY(-2px)}
+.fc .fi{font-size:18px;margin-bottom:6px}
+.fc .ft{font-size:11px;font-weight:500;color:var(--txt);margin-bottom:2px}
+.fc .fd{font-size:10px;color:var(--muted);line-height:1.5}
+
+/* ── RESOURCES ── */
+#res{
+  display:flex;flex-direction:column;
+  overflow:hidden; /* inner layout handles its own scroll */
+}
+.topbar{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:52px;flex-shrink:0;
+  background:var(--surface);border-bottom:.5px solid var(--border);
+}
+.back{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:12px;font-weight:500;color:var(--muted);
+  padding:5px 10px;border-radius:7px;
+  border:.5px solid var(--border);cursor:pointer;
+  transition:color .15s,border-color .15s,background .15s;
+}
+.back:hover{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.tbrand{font-size:15px;font-weight:500;color:var(--txt);margin-right:auto}
+.tbrand span{color:var(--accent)}
+
+.layout{
+  display:flex;flex:1;
+  /* fill remaining height after topbar */
+  height:calc(var(--h) - 52px);
+  overflow:hidden;
+}
+
+/* sidebar */
+.sb{
+  width:var(--sb-w);background:var(--sb-bg);
+  display:flex;flex-direction:column;
+  overflow-y:auto;flex-shrink:0;
+}
+.sb::-webkit-scrollbar{width:3px}
+.sb::-webkit-scrollbar-thumb{background:#3a3560;border-radius:3px}
+.sbh{padding:16px 14px 8px}
+.sbl{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:#5c5a7a;margin-bottom:3px}
+.sbt{font-size:13px;font-weight:500;color:#fff}
+.sbd{height:.5px;background:#2d2a50;margin:7px 14px}
+.sbnav{padding:0 8px 14px;display:flex;flex-direction:column;gap:2px}
+
+.si{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:7px;font-size:12px;
+  color:#9896b8;cursor:pointer;width:100%;text-align:left;
+  border:none;background:none;transition:background .14s,color .14s;
+}
+.si:hover{background:#2d2a50;color:#e0deee}
+.si.on{background:var(--accent);color:#fff;font-weight:500}
+.si .ico{font-size:12px;width:16px;text-align:center;flex-shrink:0}
+.sbadge{
+  margin-left:auto;font-size:9px;font-weight:500;
+  background:#2d2a50;color:#7876a0;padding:1px 6px;border-radius:100px;
+}
+.si.on .sbadge{background:rgba(255,255,255,.2);color:#fff}
+
+/* main content */
+.mn{flex:1;overflow-y:auto;padding:20px 22px;background:var(--bg)}
+.mn::-webkit-scrollbar{width:4px}
+.mn::-webkit-scrollbar-thumb{background:var(--color-border-secondary);border-radius:3px}
+
+.sv{display:none}
+.sv.on{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* welcome */
+.wel{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;min-height:380px;text-align:center;gap:8px;
+}
+.wi{width:56px;height:56px;background:var(--accent-soft);border-radius:50%;display:grid;place-items:center;font-size:24px;margin-bottom:4px}
+.wel h2{font-size:17px;font-weight:500;color:var(--txt)}
+.wel p{font-size:12px;color:var(--muted);max-width:220px;line-height:1.6}
+
+/* subject header */
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:13px;border-bottom:.5px solid var(--border)}
+.sico{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:19px;flex-shrink:0}
+.sh h1{font-size:19px;font-weight:500;color:var(--txt);margin-bottom:2px}
+.sh .mt{font-size:11px;color:var(--muted)}
+
+.sl{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin-bottom:9px}
+
+/* chapter grid */
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:9px;margin-bottom:18px}
+.cc{
+  background:var(--surface);border:.5px solid var(--border);
+  border-radius:var(--border-radius-lg);padding:11px 13px;
+  display:flex;flex-direction:column;gap:6px;cursor:pointer;
+  transition:border-color .15s,transform .15s;
+}
+.cc:hover{transform:translateY(-2px);border-color:var(--accent)}
+.ct{display:flex;align-items:center;justify-content:space-between}
+.cn{font-size:9px;font-weight:500;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+.cs{
+  font-size:9px;font-weight:500;background:var(--bg);color:var(--muted);
+  padding:2px 6px;border-radius:100px;
+  display:flex;align-items:center;gap:3px;
+}
+.cs::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor}
+.ctitle{font-size:12px;font-weight:500;color:var(--txt);line-height:1.4}
+.cdesc{font-size:10px;color:var(--muted);line-height:1.5}
+.ctags{display:flex;flex-wrap:wrap;gap:3px}
+.tg{font-size:9px;font-weight:500;background:var(--bg);color:var(--muted);padding:2px 6px;border-radius:4px}
+
+.addc{
+  border:1.5px dashed var(--border);border-radius:var(--border-radius-lg);
+  padding:11px 13px;display:flex;align-items:center;gap:7px;
+  font-size:11px;color:var(--muted);cursor:pointer;
+  transition:border-color .15s,color .15s;
+}
+.addc:hover{border-color:var(--accent);color:var(--accent)}
+</style>
+
+<div id="shell">
+
+  <!-- HOME PAGE -->
+  <div class="pg on" id="home">
+    <div class="blob1"></div><div class="blob2"></div>
+    <span class="eye">📚 Class 12 · Study Material</span>
+    <h1>Your <em>smart</em> study<br>companion awaits.</h1>
+    <p class="sub">Organised notes, chapter-wise resources, and quick references for every subject — all in one place.</p>
+    <div class="cta-row">
+      <button class="btn-p" id="openBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        Resources &amp; Notes
+      </button>
+      <button class="btn-o">Learn More</button>
+    </div>
+    <div class="feat-grid">
+      <div class="fc"><div class="fi">📄</div><p class="ft">Chapter Notes</p><p class="fd">Structured notes for every chapter.</p></div>
+      <div class="fc"><div class="fi">🔍</div><p class="ft">Quick Search</p><p class="fd">Find any topic instantly.</p></div>
+      <div class="fc"><div class="fi">📊</div><p class="ft">Track Progress</p><p class="fd">Mark chapters complete.</p></div>
+      <div class="fc"><div class="fi">💡</div><p class="ft">Exam Tips</p><p class="fd">Key strategies per subject.</p></div>
+    </div>
+  </div>
+
+  <!-- RESOURCES PAGE -->
+  <div class="pg" id="res">
+    <header class="topbar">
+      <button class="back" id="backBtn">← Back</button>
+      <span class="tbrand">Study<span>Hub</span></span>
+    </header>
+    <div class="layout">
+      <aside class="sb">
+        <div class="sbh"><p class="sbl">Class 12</p><p class="sbt">Subjects</p></div>
+        <div class="sbd"></div>
+        <nav class="sbnav">
+          <button class="si" data-s="physics">  <span class="ico">⚡</span>Physics        <span class="sbadge">15</span></button>
+          <button class="si" data-s="chemistry"><span class="ico">🧪</span>Chemistry      <span class="sbadge">16</span></button>
+          <button class="si" data-s="maths">    <span class="ico">📐</span>Mathematics    <span class="sbadge">13</span></button>
+          <button class="si" data-s="biology">  <span class="ico">🌱</span>Biology        <span class="sbadge">16</span></button>
+          <button class="si" data-s="english">  <span class="ico">📖</span>English        <span class="sbadge">8</span></button>
+          <button class="si" data-s="cs">       <span class="ico">💻</span>Computer Sci.  <span class="sbadge">9</span></button>
+          <button class="si" data-s="history">  <span class="ico">🏛️</span>History        <span class="sbadge">15</span></button>
+          <button class="si" data-s="economics"><span class="ico">💰</span>Economics      <span class="sbadge">10</span></button>
+        </nav>
+      </aside>
+
+      <main class="mn" id="mn">
+        <!-- Welcome -->
+        <div class="sv on" id="sv-welcome">
+          <div class="wel">
+            <div class="wi">📚</div>
+            <h2>Pick a subject</h2>
+            <p>Click any subject in the sidebar to load its chapter resources.</p>
+          </div>
+        </div>
+
+        <!-- PHYSICS -->
+        <div class="sv" id="sv-physics">
+          <div class="sh"><div class="sico" style="background:#ede9fe">⚡</div><div><h1>Physics</h1><p class="mt">Class 12 · CBSE · 15 Chapters</p></div></div>
+          <p class="sl">All Chapters</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">Electric Charges and Fields</p><p class="cdesc">Coulomb's law, electric field, field lines, Gauss's law.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Practice Q</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Electrostatic Potential &amp; Capacitance</p><p class="cdesc">Potential, potential energy, capacitors, dielectrics.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Formulae</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">Current Electricity</p><p class="cdesc">Ohm's law, resistance, EMF, Kirchhoff's laws.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Diagrams</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 04</span><span class="cs">Coming Soon</span></div><p class="ctitle">Moving Charges and Magnetism</p><p class="cdesc">Biot-Savart law, Ampere's law, solenoid.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Numericals</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 05</span><span class="cs">Coming Soon</span></div><p class="ctitle">Magnetism and Matter</p><p class="cdesc">Bar magnet, Earth's magnetism, ferromagnetism.</p><div class="ctags"><span class="tg">Notes</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 06</span><span class="cs">Coming Soon</span></div><p class="ctitle">Electromagnetic Induction</p><p class="cdesc">Faraday's law, Lenz's law, eddy currents.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Formulae</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- CHEMISTRY -->
+        <div class="sv" id="sv-chemistry">
+          <div class="sh"><div class="sico" style="background:#cffafe">🧪</div><div><h1>Chemistry</h1><p class="mt">Class 12 · CBSE · 16 Chapters</p></div></div>
+          <p class="sl">All Chapters</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">The Solid State</p><p class="cdesc">Crystal lattice, unit cell, packing efficiency, defects.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Diagrams</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Solutions</p><p class="cdesc">Raoult's law, colligative properties, osmosis.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Formulae</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">Electrochemistry</p><p class="cdesc">Galvanic cells, Nernst equation, electrolysis.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Reactions</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 04</span><span class="cs">Coming Soon</span></div><p class="ctitle">Chemical Kinetics</p><p class="cdesc">Rate laws, order of reaction, Arrhenius equation.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Numericals</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- MATHS -->
+        <div class="sv" id="sv-maths">
+          <div class="sh"><div class="sico" style="background:#fef3c7">📐</div><div><h1>Mathematics</h1><p class="mt">Class 12 · CBSE · 13 Chapters</p></div></div>
+          <p class="sl">All Chapters</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">Relations and Functions</p><p class="cdesc">Types of relations, functions, composition, inverses.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Solved Ex</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Inverse Trigonometric Functions</p><p class="cdesc">Principal branches, properties, graphs.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Formulae</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">Matrices</p><p class="cdesc">Types, operations, transpose, symmetric matrices.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Practice Q</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 04</span><span class="cs">Coming Soon</span></div><p class="ctitle">Determinants</p><p class="cdesc">Properties, cofactors, adjoint, Cramer's rule.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Numericals</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 05</span><span class="cs">Coming Soon</span></div><p class="ctitle">Continuity and Differentiability</p><p class="cdesc">Chain rule, implicit differentiation, Rolle's theorem.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Formulae</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- BIOLOGY -->
+        <div class="sv" id="sv-biology">
+          <div class="sh"><div class="sico" style="background:#d1fae5">🌱</div><div><h1>Biology</h1><p class="mt">Class 12 · CBSE · 16 Chapters</p></div></div>
+          <p class="sl">All Chapters</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">Reproduction in Organisms</p><p class="cdesc">Asexual and sexual reproduction, life spans, modes.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Diagrams</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Sexual Reproduction in Flowering Plants</p><p class="cdesc">Pollination, fertilisation, fruit and seed formation.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Diagrams</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">Human Reproduction</p><p class="cdesc">Reproductive system, gametogenesis, embryology.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Diagrams</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- ENGLISH -->
+        <div class="sv" id="sv-english">
+          <div class="sh"><div class="sico" style="background:#ffe4e6">📖</div><div><h1>English</h1><p class="mt">Class 12 · CBSE · Flamingo &amp; Vistas</p></div></div>
+          <p class="sl">Flamingo — Prose</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">The Last Lesson</p><p class="cdesc">Daudet's story about language, identity, and loss.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Summary</span><span class="tg">Q&amp;A</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Lost Spring</p><p class="cdesc">Anees Jung on childhood poverty and stolen dreams.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Summary</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">Deep Water</p><p class="cdesc">William Douglas overcoming his fear of water.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Q&amp;A</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- CS -->
+        <div class="sv" id="sv-cs">
+          <div class="sh"><div class="sico" style="background:#e2e8f0">💻</div><div><h1>Computer Science</h1><p class="mt">Class 12 · CBSE · 9 Chapters</p></div></div>
+          <p class="sl">All Chapters</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">Python Revision Tour</p><p class="cdesc">Data types, operators, I/O, control structures.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Programs</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">OOP in Python</p><p class="cdesc">Classes, objects, inheritance, polymorphism.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Programs</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">File Handling in Python</p><p class="cdesc">Text/binary files, read/write/append, CSV.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Programs</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- HISTORY -->
+        <div class="sv" id="sv-history">
+          <div class="sh"><div class="sico" style="background:#ede9fe">🏛️</div><div><h1>History</h1><p class="mt">Class 12 · CBSE · 15 Chapters (3 Parts)</p></div></div>
+          <p class="sl">Part I — Early Societies</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">Bricks, Beads and Bones</p><p class="cdesc">The Harappan Civilisation — planning, crafts, trade.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Maps</span><span class="tg">Q&amp;A</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Kings, Farmers and Towns</p><p class="cdesc">Early states and economies, 600 BCE – 600 CE.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Timeline</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+        <!-- ECONOMICS -->
+        <div class="sv" id="sv-economics">
+          <div class="sh"><div class="sico" style="background:#ffedd5">💰</div><div><h1>Economics</h1><p class="mt">Class 12 · CBSE · 10 Chapters</p></div></div>
+          <p class="sl">Microeconomics</p>
+          <div class="cg">
+            <div class="cc"><div class="ct"><span class="cn">Ch 01</span><span class="cs">Coming Soon</span></div><p class="ctitle">Introduction to Microeconomics</p><p class="cdesc">Central problems, PPF, opportunity cost.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Graphs</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 02</span><span class="cs">Coming Soon</span></div><p class="ctitle">Theory of Consumer Behaviour</p><p class="cdesc">Utility, indifference curves, budget constraints.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Graphs</span><span class="tg">Numericals</span></div></div>
+            <div class="cc"><div class="ct"><span class="cn">Ch 03</span><span class="cs">Coming Soon</span></div><p class="ctitle">Production and Costs</p><p class="cdesc">Production function, cost curves, economies of scale.</p><div class="ctags"><span class="tg">Notes</span><span class="tg">Graphs</span></div></div>
+            <div class="addc">＋ Add more chapters…</div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+var home = document.getElementById('home');
+var res  = document.getElementById('res');
+var mn   = document.getElementById('mn');
+
+document.getElementById('openBtn').addEventListener('click', function() {
+  home.classList.remove('on');
+  res.classList.add('on');
+});
+
+document.getElementById('backBtn').addEventListener('click', function() {
+  res.classList.remove('on');
+  home.classList.add('on');
+  clearActive();
+  showView('welcome');
+  mn.scrollTop = 0;
+});
+
+document.querySelectorAll('.si').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    clearActive();
+    this.classList.add('on');
+    showView(this.getAttribute('data-s'));
+    mn.scrollTop = 0;
+  });
+});
+
+function showView(id) {
+  document.querySelectorAll('.sv').forEach(function(el){ el.classList.remove('on'); });
+  var t = document.getElementById('sv-' + id);
+  if (t) t.classList.add('on');
+}
+
+function clearActive() {
+  document.querySelectorAll('.si').forEach(function(el){ el.classList.remove('on'); });
+}
+</script>
