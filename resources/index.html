@@ -483,9 +483,6 @@ document.addEventListener('DOMContentLoaded', function () {
         item.classList.toggle('expanded');
       });
 
-      // auto-expand if has files
-      if (files.length) item.classList.add('expanded');
-
       item.appendChild(header);
       item.appendChild(filesEl);
       acc.appendChild(item);
