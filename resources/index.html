@@ -314,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function () {
   };
 
   var resTypeMeta = {
-    notes:         { icon:'🗎', title:'Notes',    desc:'Theory notes and study material.' },
+    notes:         { icon:'📒', title:'Notes',    desc:'Theory notes and study material.' },
     pyqs:          { icon:'🎯', title:'PYQs',     desc:'Past year question papers.' },
     videos:        { icon:'🎬', title:'Videos',   desc:'Curated video lectures.' },
   };
@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return url;
   }
   function getLinkMeta(url) {
-    if (/drive\.google\.com\/file/.test(url))  return { badge:'PDF',    icon:'📄' };
+    if (/drive\.google\.com\/file/.test(url))  return { badge:'PDF',    icon:'📌' };
     if (/drive\.google\.com\/drive/.test(url)) return { badge:'Folder', icon:'📁' };
     if (/youtube\.com|youtu\.be/.test(url))    return { badge:'Video',  icon:'🎬' };
     return { badge:'Link', icon:'🔗' };
