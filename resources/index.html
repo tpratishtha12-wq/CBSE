@@ -746,7 +746,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
       } else {
+        } else if (key === 'videos') {
+        var vGrid = document.createElement('div');
+        vGrid.style.cssText = 'padding:.65rem .9rem .75rem;display:flex;flex-direction:column;gap:.5rem';
+        files.forEach(function(f) {
+          var card = document.createElement('div');
+          card.style.cssText = 'display:flex;align-items:center;gap:.75rem;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:.7rem 1rem';
+          card.innerHTML =
+            '<div style="width:32px;height:32px;border-radius:50%;background:#ff0000;display:grid;place-items:center;flex-shrink:0;font-size:14px;color:#fff">▶</div>' +
+            '<span style="flex:1;font-size:.82rem;font-weight:500;color:var(--text)">' + f.title + '</span>' +
+            '<a href="' + f.link + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:.3rem;background:#ff0000;color:#fff;font-size:.72rem;font-weight:600;padding:.35rem .8rem;border-radius:100px;text-decoration:none;flex-shrink:0">▶ Watch</a>';
+          vGrid.appendChild(card);
+        });
+        body.appendChild(vGrid);
+      } else {
         files.forEach(function(f){ body.appendChild(makeFileRow(f)); });
+      }
       }
 
       hdr.addEventListener('click', function () { item.classList.toggle('expanded'); });
