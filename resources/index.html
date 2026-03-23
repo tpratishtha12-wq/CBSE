@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var resTypeMeta = {
     notes:         { icon:'📒', title:'Notes',    desc:'Theory notes and study material.' },
     pyqs:          { icon:'🎯', title:'PYQs',     desc:'Past year question papers.' },
-    videos:        { icon:'🎬', title:'Videos',   desc:'Curated video lectures.' },
+    channels        { icon:'🎬', title:'Channels',   desc:'Youtube Channels' },
   };
   var resTypeOrder = ['notes','pyqs','videos'];
 
@@ -773,7 +773,7 @@ document.addEventListener('DOMContentLoaded', function () {
   /* ══════════ SEARCH ══════════ */
   function buildSearchIndex() {
     var index = [];
-    var resLabels = { notes:'Notes', pyqs:'PYQs', markingscheme:'Marking Scheme', videos:'Videos' };
+    var resLabels = { notes:'Notes', pyqs:'PYQs', markingscheme:'Marking Scheme', channels'Channels' };
     Object.keys(appData).forEach(function(subj) {
       Object.keys(appData[subj]).forEach(function(type) {
         (appData[subj][type] || []).forEach(function(f) {
@@ -879,14 +879,14 @@ document.addEventListener('DOMContentLoaded', function () {
   buildSidebar();
 
   var mockData = {
-    'Physics':         { notes:[], pyqs:[{title:'Physics PYQs 2023',link:'https://drive.google.com/file/d/example2/view'}], markingscheme:[{title:'Physics Marking Scheme',link:'https://drive.google.com/file/d/example3/view'}], videos:[] },
-    'Chemistry':       { notes:[], pyqs:[{title:'Chemistry PYQs 2023',link:'https://drive.google.com/file/d/example5/view'}], markingscheme:[], videos:[] },
-    'Mathematics':     { notes:[], pyqs:[{title:'Maths PYQs 2023',link:'https://drive.google.com/file/d/example7/view'}], markingscheme:[{title:'Maths Marking Scheme',link:'https://drive.google.com/file/d/example8/view'}], videos:[] },
-    'Biology':         { notes:[], pyqs:[{title:'Biology PYQs 2023',link:'https://drive.google.com/file/d/example10/view'}], markingscheme:[], videos:[] },
-    'English':         { notes:[], pyqs:[], markingscheme:[], videos:[] },
-    'Computer Science':{ notes:[], pyqs:[], markingscheme:[], videos:[] },
-    'Economics':       { notes:[], pyqs:[], markingscheme:[], videos:[] },
-    'History':         { notes:[], pyqs:[], markingscheme:[], videos:[] },
+    'Physics':         { notes:[], pyqs:[{title:'Physics PYQs 2023',link:'https://drive.google.com/file/d/example2/view'}], markingscheme:[{title:'Physics Marking Scheme',link:'https://drive.google.com/file/d/example3/view'}], channels[] },
+    'Chemistry':       { notes:[], pyqs:[{title:'Chemistry PYQs 2023',link:'https://drive.google.com/file/d/example5/view'}], markingscheme:[], channels[] },
+    'Mathematics':     { notes:[], pyqs:[{title:'Maths PYQs 2023',link:'https://drive.google.com/file/d/example7/view'}], markingscheme:[{title:'Maths Marking Scheme',link:'https://drive.google.com/file/d/example8/view'}], channels[] },
+    'Biology':         { notes:[], pyqs:[{title:'Biology PYQs 2023',link:'https://drive.google.com/file/d/example10/view'}], markingscheme:[], channels[] },
+    'English':         { notes:[], pyqs:[], markingscheme:[], channels[] },
+    'Computer Science':{ notes:[], pyqs:[], markingscheme:[], channels[] },
+    'Economics':       { notes:[], pyqs:[], markingscheme:[], channels[] },
+    'History':         { notes:[], pyqs:[], markingscheme:[], channels[] },
   };
   fetch('/api/resources')
     .then(function(r){ return r.json(); })
