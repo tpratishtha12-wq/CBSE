@@ -500,8 +500,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   // 🔥 SUPABASE INIT
-const SUPABASE_URL = "YOUR_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+const SUPABASE_URL = "https://swldesrzotstaldvawqh.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN3bGRlc3J6b3RzdGFsZHZhd3FoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ4NjYwMjcsImV4cCI6MjA5MDQ0MjAyN30.IeUQZNkMd-c8PtZI-HC8YpjN_irvMdDfAbqJ1n59n3E";
 
 const supabase = window.supabase.createClient(
   SUPABASE_URL,
@@ -885,7 +885,7 @@ loadAverageRating();
     document.getElementById('searchClearSb').classList.remove('visible');
     document.getElementById('sbSearchResults').style.display = 'none';
     document.getElementById('sbSearchResults').innerHTML = '';
-    setTimeout(function(){ document.getElementById('vpFrame').src = ''; }, 240);
+    setTimeout(function(){ document.getElementById('vpFrame').src = url;  currentResourceId = url; loadAverageRating(); }, 240);
     try { history.pushState({ screen: 'screen-complete', subj: currentSubj }, '', '/resources'); } catch(e) {}
   }
   function showVpToast(msg) {
@@ -1041,7 +1041,7 @@ loadAverageRating();
     // Close PDF viewer if open when switching subjects
     var vp = document.getElementById('viewerPanel');
     if (vp.classList.contains('open')) {
-      document.getElementById('vpFrame').src = '';
+      document.getElementById('vpFrame').src = url;  currentResourceId = url; loadAverageRating();
       vp.classList.remove('open');
       document.getElementById('screenArea').classList.remove('hidden');
       document.querySelector('.topbar-center').classList.remove('hidden');
