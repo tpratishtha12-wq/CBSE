@@ -1,844 +1,573 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-color="indigo">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CBSEHub — Class 12 CBSE</title>
-  <meta name="description" content="Your smart Class 12 CBSE study companion."/>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg:        #0b0b0d;
-      --surface:   #111113;
-      --surface-2: #18181b;
-      --border:    #222225;
-      --border-2:  #2c2c30;
-      --text:      #e8e8ea;
-      --muted:     #6e6e78;
-      --muted-2:   #44444c;
-      --accent:    #6366f1;
-      --accent-2:  #818cf8;
-      --accent-3:  #4f46e5;
-      --glow:      99,102,241;
-      --font-d:    'Instrument Serif', serif;
-      --font-b:    'Geist', sans-serif;
-      --carousel-h: 58px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBSEHub | Premium Educational Resources</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@100..900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Default Accent Color (Blue) - Stored as RGB values for opacity support */
+            --glow: 59, 130, 246; 
+            
+            /* Dark Theme Colors (Default) */
+            --bg-color: #030712;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --grid-color: rgba(255, 255, 255, 0.05);
+        }
 
-    html[data-theme="light"] {
-      --bg:        #fafafa;
-      --surface:   #f4f4f6;
-      --surface-2: #ececf0;
-      --border:    #e0e0e4;
-      --border-2:  #cacace;
-      --text:      #09090b;
-      --muted:     #71717a;
-      --muted-2:   #a1a1aa;
-    }
+        /* Light Theme Variable Overrides */
+        body.light-theme {
+            --bg-color: #f9fafb;
+            --text-main: #030712;
+            --text-muted: #4b5563;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(0, 0, 0, 0.03);
+            --grid-color: rgba(0, 0, 0, 0.05);
+        }
 
-    /* Color Themes */
-    :root[data-color="indigo"]  { --accent:#6366f1; --accent-2:#818cf8; --accent-3:#4f46e5; --glow:99,102,241; }
-    :root[data-color="blue"]    { --accent:#3b82f6; --accent-2:#60a5fa; --accent-3:#2563eb; --glow:59,130,246; }
-    :root[data-color="purple"]  { --accent:#a855f7; --accent-2:#c084fc; --accent-3:#9333ea; --glow:168,85,247; }
-    :root[data-color="emerald"] { --accent:#10b981; --accent-2:#34d399; --accent-3:#059669; --glow:16,185,129; }
-    :root[data-color="rose"]    { --accent:#f43f5e; --accent-2:#fb7185; --accent-3:#e11d48; --glow:244,63,94; }
-    :root[data-color="cyan"]    { --accent:#06b6d4; --accent-2:#22d3ee; --accent-3:#0891b2; --glow:6,182,212; }
-    :root[data-color="amber"]   { --accent:#f59e0b; --accent-2:#fbbf24; --accent-3:#d97706; --glow:245,158,11; }
-    :root[data-color="teal"]    { --accent:#14b8a6; --accent-2:#2dd4bf; --accent-3:#0d9488; --glow:20,184,166; }
-    :root[data-color="orange"]  { --accent:#f97316; --accent-2:#fb923c; --accent-3:#ea580c; --glow:249,115,22; }
-    :root[data-color="lime"]    { --accent:#84cc16; --accent-2:#a3e635; --accent-3:#65a30d; --glow:132,204,22; }
-    :root[data-color="sky"]     { --accent:#0ea5e9; --accent-2:#38bdf8; --accent-3:#0284c7; --glow:14,165,233; }
-    :root[data-color="pink"]    { --accent:#ec4899; --accent-2:#f472b6; --accent-3:#db2777; --glow:236,72,153; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }
-    body {
-      font-family: var(--font-b);
-      background:
-        radial-gradient(ellipse 60% 50% at 15% 20%, rgba(var(--glow),.04) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 40% at 85% 75%, rgba(var(--glow),.035) 0%, transparent 70%),
-        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(var(--glow),.025) 0%, transparent 60%),
-        var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      transition: background 0.35s ease, color 0.35s ease;
-    }
-    html[data-theme="light"] body {
-      background:
-        radial-gradient(ellipse 60% 50% at 15% 20%, rgba(var(--glow),.06) 0%, transparent 70%),
-        radial-gradient(ellipse 50% 40% at 85% 75%, rgba(var(--glow),.05) 0%, transparent 70%),
-        radial-gradient(ellipse 80% 60% at 50% 50%, rgba(var(--glow),.04) 0%, transparent 60%),
-        var(--bg);
-    }
-    a { text-decoration: none; color: inherit; }
-    button { font-family: inherit; border: none; cursor: pointer; }
-    svg { display: inline-block; flex-shrink: 0; }
+        body {
+            font-family: 'Geist', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            position: relative;
+        }
 
-    /* Banner */
-    .banner {
-      text-align: center;
-      padding: .38rem 1rem;
-      font-size: .68rem;
-      font-weight: 400;
-      color: var(--muted-2);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      letter-spacing: .03em;
-      background: linear-gradient(90deg, transparent, rgba(var(--glow),.03), transparent);
-    }
+        /* Background Multi-layered Gradient */
+        .body-gradient {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(var(--glow), 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 0% 50%, rgba(var(--glow), 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(var(--glow), 0.08) 0%, transparent 50%);
+            transition: background 0.5s ease;
+        }
+        
+        body.light-theme .body-gradient {
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(var(--glow), 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 0% 50%, rgba(var(--glow), 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, rgba(var(--glow), 0.12) 0%, transparent 50%);
+        }
 
-    /* Nav */
-    .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 1.75rem;
-      height: 54px;
-      flex-shrink: 0;
-      border-bottom: 1px solid var(--border);
-      background: rgba(var(--bg-raw, 11,11,13), 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-    .brand {
-      font-family: var(--font-d);
-      font-size: 1.2rem;
-      font-weight: 400;
-      letter-spacing: -.01em;
-    }
-    .brand span { color: var(--accent-2); }
-    .nav-right { display: flex; align-items: center; gap: .6rem; position: relative; }
+        /* Grid Background with radial mask at 50% 50% */
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.18; /* Reduced opacity to not compete with SVGs */
+            mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, transparent 80%);
+        }
 
-    .icon-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px; height: 36px;
-      background: var(--surface-2);
-      color: var(--muted);
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-      flex-shrink: 0;
-    }
-    .icon-btn:hover {
-      color: var(--text);
-      border-color: var(--accent-2);
-      background: var(--surface);
-      box-shadow: 0 0 0 3px rgba(var(--glow),.12);
-    }
+        /* Hero Overlay Gradients */
+        .hero-gradient {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(var(--glow), 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 20% 80%, rgba(var(--glow), 0.1) 0%, transparent 30%),
+                radial-gradient(circle at 80% 20%, rgba(var(--glow), 0.1) 0%, transparent 30%);
+        }
 
-    /* Color picker */
-    .color-picker { position: relative; }
-    .color-palette {
-      display: none;
-      position: absolute;
-      top: calc(100% + .6rem); right: 0;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.9rem;
-      z-index: 200;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.55rem;
-      min-width: 176px;
-    }
-    .color-palette.show { display: grid; }
-    .color-swatch {
-      width: 34px; height: 34px;
-      border-radius: 8px;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.2s;
-      position: relative;
-    }
-    .color-swatch:hover { transform: scale(1.12); }
-    .color-swatch.active { border-color: var(--text); }
-    .color-swatch.active::after {
-      content: '\2713';
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .7rem; color: #fff;
-      text-shadow: 0 1px 3px rgba(0,0,0,.6);
-    }
-    .color-swatch.indigo  { background: #818cf8; }
-    .color-swatch.blue    { background: #60a5fa; }
-    .color-swatch.purple  { background: #c084fc; }
-    .color-swatch.emerald { background: #34d399; }
-    .color-swatch.rose    { background: #fb7185; }
-    .color-swatch.cyan    { background: #22d3ee; }
-    .color-swatch.amber   { background: #fbbf24; }
-    .color-swatch.teal    { background: #2dd4bf; }
-    .color-swatch.orange  { background: #fb923c; }
-    .color-swatch.lime    { background: #a3e635; }
-    .color-swatch.sky     { background: #38bdf8; }
-    .color-swatch.pink    { background: #f472b6; }
+        /* Header Navigation & Controls */
+        header {
+            position: relative;
+            z-index: 50;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between; /* Keeps them pushed to opposite sides */
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    /* Disclaimer */
-    .disclaimer-btn {
-      display: inline-flex; align-items: center; gap: .35rem;
-      background: transparent; color: var(--muted);
-      font-size: .78rem; font-weight: 400;
-      padding: .45rem .9rem; border-radius: 8px;
-      border: 1px solid var(--border); height: 36px;
-      transition: all 0.2s;
-    }
-    .disclaimer-btn:hover {
-      color: var(--text); border-color: var(--border-2);
-      background: var(--surface-2);
-    }
-    .disc-drop {
-      display: none; position: absolute;
-      top: calc(100% + .7rem); right: 0;
-      width: 310px; background: var(--surface);
-      border: 1px solid var(--border); border-radius: 12px;
-      padding: 1.3rem 1.45rem; z-index: 200;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
-      animation: drop .15s ease;
-    }
-    .disc-drop.show { display: block; }
-    .disc-drop p { font-size: .75rem; color: var(--muted); line-height: 1.8; margin-bottom: .75rem; }
-    .disc-drop p:last-child { margin-bottom: 0; }
-    .disc-drop a { color: var(--accent-2); font-weight: 500; }
-    .disc-label {
-      font-size: .64rem; font-weight: 600;
-      text-transform: uppercase; letter-spacing: .09em;
-      color: var(--muted-2); margin-bottom: .8rem;
-    }
+        .logo-text {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem;
+            font-style: italic;
+            font-weight: bold;
+            color: var(--text-main);
+            text-decoration: none;
+        }
 
-    .nav-cta {
-      display: inline-flex; align-items: center; gap: .4rem;
-      background: var(--accent); color: #ffffff;
-      font-size: .8rem; font-weight: 600;
-      padding: .5rem 1.2rem; border-radius: 8px; height: 36px;
-      transition: all 0.2s; letter-spacing: .01em;
-    }
-    .nav-cta:hover {
-      background: var(--accent-3); transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(var(--glow),.35);
-    }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
 
-    @keyframes drop {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+        /* Color Picker */
+        .color-picker {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--card-bg);
+            padding: 0.5rem;
+            border-radius: 2rem;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
 
-    /* Hero */
-    .hero {
-      flex: 1;
-      display: flex; align-items: center; justify-content: center;
-      padding: 0 2.5rem 3.5rem;
-      position: relative; overflow: hidden; min-height: 0;
-    }
-    .hero::before {
-      content: '';
-      position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
-      width: 700px; height: 700px;
-      background: radial-gradient(circle, rgba(var(--glow),.07) 0%, transparent 60%);
-      pointer-events: none; transition: background 0.5s ease;
-    }
-    .hero::after {
-      content: '';
-      position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, rgba(var(--glow),.04) 0%, transparent 60%);
-      pointer-events: none; transition: background 0.5s ease;
-    }
+        .color-btn {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-btn:hover { transform: scale(1.2); }
+        .color-btn.active { border-color: var(--text-main); }
 
-    .grid-bg {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(var(--border) 1px, transparent 1px),
-        linear-gradient(90deg, var(--border) 1px, transparent 1px);
-      background-size: 60px 60px;
-      opacity: 0.18; pointer-events: none;
-      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 20%, transparent 70%);
-    }
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+        .theme-toggle:hover { background: rgba(var(--glow), 0.2); }
 
-    .hero-gradient {
-      position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 45% 45% at 50% 40%, rgba(var(--glow),.06) 0%, transparent 65%),
-        radial-gradient(ellipse 35% 30% at 20% 70%, rgba(var(--glow),.03) 0%, transparent 60%),
-        radial-gradient(ellipse 35% 30% at 80% 30%, rgba(var(--glow),.03) 0%, transparent 60%);
-      pointer-events: none; z-index: 0;
-      transition: background 0.5s ease;
-    }
+        /* Main Hero Section */
+        .hero {
+            position: relative;
+            z-index: 10;
+            min-height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
 
-    /* Floating decorative SVGs */
-    .deco-container {
-      position: absolute; inset: 0;
-      pointer-events: none; z-index: 1; overflow: hidden;
-    }
-    .deco-svg {
-      position: absolute; opacity: 0;
-      animation: decoFadeIn 1.2s ease forwards;
-    }
-    .deco-svg svg {
-      stroke: rgba(var(--glow), .18);
-      fill: none;
-      transition: stroke 0.5s ease;
-    }
+        /* Premium Glow Blobs */
+        .glow-blobs {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 60vw;
+            height: 40vw;
+            background: radial-gradient(ellipse at center, rgba(var(--glow), 0.3) 0%, transparent 70%);
+            filter: blur(80px);
+            z-index: -1;
+            pointer-events: none;
+            transition: background 0.5s ease;
+        }
 
-    .deco-grad-cap {
-      top: 8%; left: 6%; width: 52px; height: 52px;
-      animation: decoFadeIn 1.2s .3s ease forwards, floatSlow 8s 1.5s ease-in-out infinite;
-    }
-    .deco-book {
-      bottom: 18%; right: 7%; width: 48px; height: 48px;
-      animation: decoFadeIn 1.2s .5s ease forwards, floatSlow 9s 2s ease-in-out infinite;
-    }
-    .deco-atom {
-      top: 14%; right: 10%; width: 56px; height: 56px;
-      animation: decoFadeIn 1.2s .2s ease forwards, floatSlow 10s 1s ease-in-out infinite;
-    }
-    .deco-flask {
-      bottom: 22%; left: 8%; width: 44px; height: 44px;
-      animation: decoFadeIn 1.2s .6s ease forwards, floatSlow 7s 1.8s ease-in-out infinite;
-    }
-    .deco-pencil {
-      top: 55%; left: 4%; width: 42px; height: 42px;
-      animation: decoFadeIn 1.2s .7s ease forwards, floatSlow 8.5s 2.2s ease-in-out infinite;
-    }
-    .deco-bulb {
-      top: 40%; right: 5%; width: 46px; height: 46px;
-      animation: decoFadeIn 1.2s .4s ease forwards, floatSlow 9.5s 1.3s ease-in-out infinite;
-    }
-    .deco-calculator {
-      top: 72%; right: 14%; width: 40px; height: 40px;
-      animation: decoFadeIn 1.2s .8s ease forwards, floatSlow 7.5s 2.5s ease-in-out infinite;
-    }
-    .deco-dna {
-      top: 5%; left: 50%; transform: translateX(-50%); width: 50px; height: 50px;
-      animation: decoFadeIn 1.2s .35s ease forwards, floatDNASlow 8s 1.6s ease-in-out infinite;
-    }
-    .deco-globe {
-      bottom: 38%; left: 14%; width: 46px; height: 46px;
-      animation: decoFadeIn 1.2s .55s ease forwards, floatSlow 10s 2.1s ease-in-out infinite;
-    }
-    .deco-compass {
-      top: 30%; right: 18%; width: 44px; height: 44px;
-      animation: decoFadeIn 1.2s .65s ease forwards, floatSlow 8s 1.9s ease-in-out infinite;
-    }
+        /* Typography */
+        h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(4rem, 8vw, 8rem);
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to bottom, var(--text-main) 30%, rgba(var(--glow), 0.8));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-    @keyframes decoFadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      25%      { transform: translateY(-10px) rotate(1.5deg); }
-      50%      { transform: translateY(-6px) rotate(-1deg); }
-      75%      { transform: translateY(-12px) rotate(0.5deg); }
-    }
-    @keyframes floatDNASlow {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      25%      { transform: translateX(-50%) translateY(-10px); }
-      50%      { transform: translateX(-50%) translateY(-5px); }
-      75%      { transform: translateX(-50%) translateY(-12px); }
-    }
+        p.subtitle {
+            font-size: clamp(1.2rem, 2vw, 1.5rem);
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
 
-    .hero-inner {
-      position: relative; z-index: 2;
-      display: flex; flex-direction: column;
-      align-items: center; text-align: center;
-      max-width: 680px; gap: 1.5rem;
-    }
-    .eyebrow {
-      font-size: .72rem; font-weight: 500;
-      color: var(--accent-2); letter-spacing: .06em;
-      text-transform: uppercase;
-      animation: fadeUp .6s ease both;
-      display: inline-flex; align-items: center; gap: .5rem;
-      background: rgba(var(--glow),.1);
-      padding: .38rem 1rem .38rem .75rem;
-      border-radius: 20px; border: 1px solid rgba(var(--glow),.22);
-    }
-    .eyebrow-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent-2);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: .5; transform: scale(.7); }
-    }
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
 
-    .hero h1 {
-      font-family: var(--font-d);
-      font-size: clamp(2.8rem, 7vw, 4.8rem);
-      font-weight: 400; line-height: 1.08;
-      letter-spacing: -.03em;
-      animation: fadeUp .6s .1s ease both;
-    }
-    .hero h1 em { font-style: italic; color: var(--accent-2); }
+        .btn {
+            padding: 0.875rem 2rem;
+            border-radius: 2rem;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    .sub {
-      font-size: 1.02rem; font-weight: 400;
-      color: var(--muted); line-height: 1.85;
-      max-width: 440px;
-      animation: fadeUp .6s .2s ease both;
-    }
+        .btn-primary {
+            background-color: rgb(var(--glow));
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 20px rgba(var(--glow), 0.4);
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 30px rgba(var(--glow), 0.6);
+            transform: translateY(-2px);
+        }
 
-    .actions {
-      display: flex; gap: .75rem; flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp .6s .3s ease both;
-      margin-top: .2rem;
-    }
-    .btn {
-      display: inline-flex; align-items: center; gap: .55rem;
-      font-size: .92rem; font-weight: 600;
-      padding: .82rem 1.75rem; border-radius: 10px;
-      transition: all .22s; border: none; cursor: pointer;
-      letter-spacing: .01em; white-space: nowrap;
-    }
-    .btn-primary {
-      background: var(--accent); color: #ffffff;
-      box-shadow: 0 4px 16px rgba(var(--glow),.28);
-    }
-    .btn-primary:hover {
-      background: var(--accent-3); transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(var(--glow),.42);
-    }
-    .btn-secondary {
-      background: var(--surface-2); color: var(--text);
-      border: 1px solid var(--border-2);
-    }
-    .btn-secondary:hover {
-      color: var(--accent-2); border-color: var(--accent-2);
-      background: var(--surface); transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(var(--glow),.15);
-    }
-    .btn-ghost {
-      background: transparent; color: var(--muted);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover {
-      color: var(--text); border-color: var(--border-2);
-      background: var(--surface-2); transform: translateY(-2px);
-    }
+        .btn-secondary {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
 
-    .bottom-meta {
-      display: flex; align-items: center; justify-content: center;
-      gap: 1.6rem;
-      animation: fadeUp .6s .38s ease both;
-    }
-    .meta-item {
-      font-size: .76rem; color: var(--muted-2);
-      display: flex; align-items: center; gap: .4rem; font-weight: 500;
-    }
-    .meta-item svg { color: var(--accent-2); opacity: .7; }
-    .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border-2); }
+        .btn-secondary:hover {
+            background-color: rgba(var(--glow), 0.1);
+            border-color: rgba(var(--glow), 0.5);
+            transform: translateY(-2px);
+        }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+        /* Disclaimer Dropdown */
+        .disclaimer-container {
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        
+        .disclaimer-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+        
+        .disclaimer-btn:hover { color: var(--text-main); }
+        
+        .disclaimer-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 1rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            width: 300px;
+            text-align: left;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+        .disclaimer-content.show { display: block; animation: fadeIn 0.2s ease-out; }
 
-    /* Carousel */
-    .subjects-carousel {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      height: var(--carousel-h); background: var(--bg);
-      border-top: 1px solid var(--border);
-      display: flex; align-items: center; overflow: hidden;
-      flex-shrink: 0; z-index: 50;
-    }
-    .subjects-carousel::before,
-    .subjects-carousel::after {
-      content: ''; position: absolute; top: 0; bottom: 0;
-      width: 100px; z-index: 2; pointer-events: none;
-    }
-    .subjects-carousel::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
-    .subjects-carousel::after  { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -10px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
 
-    .carousel-track {
-      display: flex; align-items: center;
-      animation: scroll 30s linear infinite;
-      will-change: transform;
-    }
-    .carousel-track:hover { animation-play-state: paused; }
+        /* Infinite Carousel */
+        .carousel-wrapper {
+            width: 100%;
+            max-width: 800px;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);
+            margin-bottom: 3rem;
+        }
 
-    .subject-item {
-      display: inline-flex; align-items: center; gap: 0;
-      flex-shrink: 0; color: var(--muted);
-      font-size: .82rem; font-weight: 500;
-      letter-spacing: .01em; transition: color 0.2s;
-      cursor: default; user-select: none;
-    }
-    .subject-item:hover { color: var(--accent-2); }
-    .subject-pill {
-      display: inline-flex; align-items: center;
-      gap: .5rem; padding: 0 1.1rem;
-    }
-    .subject-pipe {
-      color: var(--border-2); font-size: 1.1rem;
-      font-weight: 300; line-height: 1; opacity: .6;
-    }
-    .subject-icon { font-size: .95rem; line-height: 1; }
+        .carousel-track {
+            display: flex;
+            gap: 3rem;
+            width: max-content;
+            animation: scroll 20s linear infinite;
+        }
 
-    @keyframes scroll {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
+        .carousel-item {
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .deco-svg { transform: scale(.65); }
-      .deco-grad-cap { top: 5%; left: 2%; }
-      .deco-book { bottom: 22%; right: 2%; }
-      .deco-atom { top: 10%; right: 3%; }
-      .deco-flask { bottom: 26%; left: 2%; }
-      .deco-pencil { top: 50%; left: 1%; }
-      .deco-bulb { top: 35%; right: 1%; }
-      .deco-calculator { top: 68%; right: 4%; }
-      .deco-dna { top: 3%; }
-      .deco-globe { bottom: 35%; left: 4%; }
-      .deco-compass { top: 28%; right: 6%; }
-    }
-    @media (max-width: 640px) {
-      html, body { overflow: auto; }
-      .nav { padding: 0 1.1rem; }
-      .nav-right { gap: .45rem; }
-      .disclaimer-btn span { display: none; }
-      .hero { padding: 2rem 1.25rem 5rem; }
-      .hero h1 { font-size: clamp(2.2rem, 8vw, 3rem); }
-      .btn { padding: .7rem 1.3rem; font-size: .85rem; }
-      .bottom-meta { flex-wrap: wrap; gap: .8rem; }
-      .deco-svg { transform: scale(.5); }
-      .deco-compass, .deco-globe { display: none; }
-    }
-  </style>
+        .carousel-item svg { stroke: rgba(var(--glow), 0.8); }
+
+        @keyframes scroll {
+            to { transform: translateX(calc(-50% - 1.5rem)); }
+        }
+
+        /* Bottom Meta */
+        .bottom-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            padding-top: 2rem;
+            width: 100%;
+        }
+
+        /* Educational SVGs */
+        .svg-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .edu-svg {
+            position: absolute;
+            fill: none;
+            stroke: rgba(var(--glow), 0.18);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            width: 48px;
+            height: 48px;
+            opacity: 0;
+            animation: floatSlow 8s ease-in-out infinite alternate, fade-in 1s forwards;
+            transition: stroke 0.5s ease;
+        }
+
+        @keyframes fade-in { to { opacity: 1; } }
+
+        @keyframes floatSlow {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes floatDNASlow {
+            0% { transform: translateX(-50%) translateY(0); }
+            100% { transform: translateX(-50%) translateY(-20px); }
+        }
+
+        /* Positioning the 10 icons around the perimeter */
+        .svg-cap { top: 15%; left: 15%; animation-delay: 0s, 0.5s; width: 64px; height: 64px; }
+        .svg-book { top: 20%; right: 15%; animation-delay: -2s, 0.8s; width: 56px; height: 56px; }
+        .svg-atom { top: 40%; left: 8%; animation-delay: -4s, 1.2s; width: 72px; height: 72px; }
+        .svg-flask { top: 45%; right: 10%; animation-delay: -1s, 1.5s; width: 50px; height: 50px; }
+        .svg-pencil { top: 65%; left: 18%; animation-delay: -5s, 1.8s; width: 44px; height: 44px; }
+        .svg-bulb { top: 70%; right: 20%; animation-delay: -3s, 2.1s; width: 52px; height: 52px; }
+        .svg-calc { top: 85%; left: 30%; animation-delay: -6s, 2.4s; width: 48px; height: 48px; }
+        .svg-globe { top: 10%; left: 50%; transform: translateX(-50%); animation: floatDNASlow 9s ease-in-out infinite alternate, fade-in 1s forwards; animation-delay: -2s, 2.7s; }
+        .svg-compass { top: 85%; right: 30%; animation-delay: -7s, 3.0s; width: 54px; height: 54px; }
+        .svg-dna { bottom: 5%; left: 50%; transform: translateX(-50%); animation: floatDNASlow 10s ease-in-out infinite alternate, fade-in 1s forwards; animation-delay: 0s, 3.3s; width: 60px; height: 60px; }
+
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .edu-svg { width: 32px; height: 32px; }
+            .svg-cap { width: 42px; height: 42px; }
+            .svg-book { width: 36px; height: 36px; }
+            .svg-atom { width: 46px; height: 46px; }
+            .svg-globe, .svg-dna { width: 40px; height: 40px; }
+        }
+
+        @media (max-width: 640px) {
+            .edu-svg { width: 24px; height: 24px; }
+            .svg-cap { width: 32px; height: 32px; }
+            .svg-globe, .svg-compass { display: none; }
+            header { flex-direction: column-reverse; gap: 1rem; } /* Ensures correct stacking on mobile */
+            h1 { font-size: 3.5rem; }
+        }
+
+    </style>
 </head>
 <body>
-
-  <div class="banner">✦ work in progress — updated regularly ✦</div>
-
-  <nav>
-    <span class="brand">CBSE<span>Hub</span></span>
-    <div class="nav-right">
-
-      <button class="icon-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
-        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-      </button>
-
-      <div class="color-picker">
-        <button class="icon-btn" onclick="toggleColorPalette()" title="Change accent color">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-            <path d="M12 2v20M2 12h20" stroke-width="1"/>
-            <path d="M12 2a10 10 0 0 1 0 20" fill="rgba(var(--glow),.2)"/>
-          </svg>
-        </button>
-        <div class="color-palette" id="colorPalette">
-          <div class="color-swatch indigo  active" onclick="setColor('indigo')"  title="Indigo"></div>
-          <div class="color-swatch blue"          onclick="setColor('blue')"    title="Blue"></div>
-          <div class="color-swatch purple"        onclick="setColor('purple')"  title="Purple"></div>
-          <div class="color-swatch emerald"       onclick="setColor('emerald')" title="Emerald"></div>
-          <div class="color-swatch rose"          onclick="setColor('rose')"    title="Rose"></div>
-          <div class="color-swatch cyan"          onclick="setColor('cyan')"    title="Cyan"></div>
-          <div class="color-swatch amber"         onclick="setColor('amber')"   title="Amber"></div>
-          <div class="color-swatch teal"          onclick="setColor('teal')"    title="Teal"></div>
-          <div class="color-swatch orange"        onclick="setColor('orange')"  title="Orange"></div>
-          <div class="color-swatch lime"          onclick="setColor('lime')"    title="Lime"></div>
-          <div class="color-swatch sky"           onclick="setColor('sky')"     title="Sky"></div>
-          <div class="color-swatch pink"          onclick="setColor('pink')"    title="Pink"></div>
-        </div>
-      </div>
-
-      <button class="disclaimer-btn" onclick="toggleDisc()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="10"/>
-          <line x1="12" y1="16" x2="12" y2="12"/>
-          <line x1="12" y1="8" x2="12.01" y2="8"/>
-        </svg>
-        <span>Disclaimer</span>
-      </button>
-      <div class="disc-drop" id="discDrop">
-        <p class="disc-label">Disclaimer</p>
-        <p>CBSEHub is unofficial. All materials are shared for educational purposes — we hold no ownership or copyright over any content.</p>
-        <p>If you're the rightful owner of any resource, email <a href="mailto:contact@csbehub.in">contact@csbehub.in</a> and we'll remove it promptly.</p>
-      </div>
-
-      <a href="/resources" class="nav-cta">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
-          <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
-        </svg>
-        Resources
-      </a>
-    </div>
-  </nav>
-
-  <section class="hero">
+    <div class="body-gradient"></div>
     <div class="grid-bg"></div>
     <div class="hero-gradient"></div>
 
-    <div class="deco-container">
-
-      <div class="deco-svg deco-grad-cap">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M24 4L4 16l20 12 20-12L24 4z"/>
-          <path d="M10 20v12l14 8 14-8V20"/>
-          <line x1="24" y1="32" x2="24" y2="44"/>
-          <path d="M20 14l8-4"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-book">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 8c4-2 8-2 12 0l4 2 4-2c4-2 8-2 12 0v28c-4-2-8-2-12 0l-4 2-4-2c-4-2-8-2-12 0V8z"/>
-          <line x1="20" y1="10" x2="20" y2="38"/>
-          <line x1="10" y1="14" x2="16" y2="15"/>
-          <line x1="10" y1="20" x2="16" y2="21"/>
-          <line x1="32" y1="15" x2="38" y2="14"/>
-          <line x1="32" y1="21" x2="38" y2="20"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-atom">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="24" cy="24" r="3"/>
-          <ellipse cx="24" cy="24" rx="20" ry="8"/>
-          <ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(60 24 24)"/>
-          <ellipse cx="24" cy="24" rx="20" ry="8" transform="rotate(120 24 24)"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-flask">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6h12v10l8 22a2 2 0 01-2 2H14a2 2 0 01-2-2l8-22V6z"/>
-          <line x1="16" y1="6" x2="32" y2="6"/>
-          <path d="M16 30h16" stroke-dasharray="2 2"/>
-          <circle cx="24" cy="38" r="2"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-pencil">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 40l4-16L32 4l12 12L20 36 8 40z"/>
-          <line x1="28" y1="8" x2="40" y2="20"/>
-          <path d="M12 36l-4 4"/>
-          <line x1="8" y1="40" x2="4" y2="44"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-bulb">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 32h12"/>
-          <path d="M20 36h8"/>
-          <path d="M24 4a14 14 0 00-8 25.4V32h16v-2.6A14 14 0 0024 4z"/>
-          <line x1="24" y1="12" x2="24" y2="20"/>
-          <line x1="20" y1="16" x2="28" y2="16"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-calculator">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="10" y="4" width="28" height="40" rx="3"/>
-          <rect x="14" y="8" width="20" height="10" rx="1"/>
-          <circle cx="18" cy="24" r="2"/><circle cx="24" cy="24" r="2"/><circle cx="30" cy="24" r="2"/>
-          <circle cx="18" cy="30" r="2"/><circle cx="24" cy="30" r="2"/><circle cx="30" cy="30" r="2"/>
-          <circle cx="18" cy="36" r="2"/><circle cx="24" cy="36" r="2"/><circle cx="30" cy="36" r="2"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-dna">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M16 4c0 8 16 8 16 16s-16 8-16 16"/>
-          <path d="M32 4c0 8-16 8-16 16s16 8 16 16"/>
-          <line x1="18" y1="12" x2="30" y2="12"/>
-          <line x1="16" y1="20" x2="32" y2="20"/>
-          <line x1="18" y1="28" x2="30" y2="28"/>
-          <line x1="16" y1="36" x2="32" y2="36"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-globe">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="24" cy="24" r="20"/>
-          <ellipse cx="24" cy="24" rx="10" ry="20"/>
-          <line x1="4" y1="24" x2="44" y2="24"/>
-          <path d="M6 14h36"/>
-          <path d="M6 34h36"/>
-        </svg>
-      </div>
-
-      <div class="deco-svg deco-compass">
-        <svg viewBox="0 0 48 48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="24" cy="24" r="20"/>
-          <circle cx="24" cy="24" r="2"/>
-          <line x1="24" y1="4" x2="24" y2="8"/>
-          <line x1="24" y1="40" x2="24" y2="44"/>
-          <line x1="4" y1="24" x2="8" y2="24"/>
-          <line x1="40" y1="24" x2="44" y2="24"/>
-          <line x1="9.86" y1="9.86" x2="12.69" y2="12.69"/>
-          <line x1="35.31" y1="35.31" x2="38.14" y2="38.14"/>
-          <line x1="9.86" y1="38.14" x2="12.69" y2="35.31"/>
-          <line x1="35.31" y1="12.69" x2="38.14" y2="9.86"/>
-          <polygon points="24,24 22,10 26,10" fill="rgba(var(--glow),.12)"/>
-        </svg>
-      </div>
-
+    <div class="svg-container">
+        <svg class="edu-svg svg-cap" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <svg class="edu-svg svg-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        <svg class="edu-svg svg-atom" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(30 12 12)"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(90 12 12)"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(150 12 12)"/></svg>
+        <svg class="edu-svg svg-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 9l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3h-4zM6 14h12"/></svg>
+        <svg class="edu-svg svg-pencil" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <svg class="edu-svg svg-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 12 3a4.65 4.65 0 0 0-4.5 8.5c.76.76 1.23 1.52 1.41 2.5z"/></svg>
+        <svg class="edu-svg svg-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><path d="M8 6h8M16 14v4M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"/></svg>
+        <svg class="edu-svg svg-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <svg class="edu-svg svg-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <svg class="edu-svg svg-dna" viewBox="0 0 24 24"><path d="M4 22c5-5 5-15 0-20M20 22c-5-5-5-15 0-20M8 5h8M6 10h12M6 14h12M8 19h8"/></svg>
     </div>
 
-    <div class="hero-inner">
-      <p class="eyebrow">
-        <span class="eyebrow-dot"></span>
-        class 12 cbse &middot; chapter-wise
-      </p>
+    <header>
+        <div class="controls">
+            <div class="color-picker" id="colorPicker">
+                </div>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+            </button>
+        </div>
+        <a href="#" class="logo-text">CBSEHub</a>
+    </header>
 
-      <h1>Study <em>smarter,</em><br>score higher.</h1>
+    <main class="hero">
+        <div class="glow-blobs"></div>
+        
+        <h1>Premium CBSE<br>Study Material</h1>
+        <p class="subtitle">Elevate your preparation with state-of-the-art notes, interactive models, and comprehensive question banks designed for the modern student.</p>
+        
+        <div class="actions">
+            <a href="#" class="btn btn-primary">Get Started</a>
+            <a href="#" class="btn btn-secondary">Explore Syllabus</a>
+        </div>
 
-      <p class="sub">Notes, PDFs, and practice questions for every subject — organised and ready when you are.</p>
+        <div class="disclaimer-container">
+            <button class="disclaimer-btn" id="disclaimerBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                Important Disclaimer
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div class="disclaimer-content" id="disclaimerContent">
+                CBSEHub is an independent platform and is not affiliated with, endorsed, or sponsored by the Central Board of Secondary Education (CBSE) or any official government entity.
+            </div>
+        </div>
 
-      <div class="actions">
-        <a href="/resources" class="btn btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
-            <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
-          </svg>
-          Browse Resources
-        </a>
-        <a href="dashboard.html" class="btn btn-secondary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7" rx="1"/>
-            <rect x="14" y="3" width="7" height="7" rx="1"/>
-            <rect x="14" y="14" width="7" height="7" rx="1"/>
-            <rect x="3" y="14" width="7" height="7" rx="1"/>
-          </svg>
-          Dashboard
-        </a>
-        <a href="https://github.com/tpratishtha12-wq/CBSE" class="btn btn-ghost" target="_blank" rel="noopener noreferrer">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
-          </svg>
-          GitHub
-        </a>
-      </div>
+        <div class="carousel-wrapper">
+            <div class="carousel-track" id="carouselTrack">
+                </div>
+        </div>
 
-      <div class="bottom-meta">
-        <span class="meta-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
-          </svg>
-          8 subjects
-        </span>
-        <span class="meta-dot"></span>
-        <span class="meta-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          100+ chapters
-        </span>
-        <span class="meta-dot"></span>
-        <span class="meta-item">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          Always free
-        </span>
-      </div>
-    </div>
-  </section>
+        <div class="bottom-meta">
+            <span>© 2026 CBSEHub</span>
+            <span>Class 9-12</span>
+            <span>NCERT Aligned</span>
+        </div>
+    </main>
 
-  <div class="subjects-carousel">
-    <div class="carousel-track" id="carouselTrack"></div>
-  </div>
+    <script>
+        // --- 1. Color Picker Logic (12 Accent Colors) ---
+        const colors = [
+            { name: 'Red', rgb: '239, 68, 68', hex: '#ef4444' },
+            { name: 'Orange', rgb: '249, 115, 22', hex: '#f97316' },
+            { name: 'Amber', rgb: '245, 158, 11', hex: '#f59e0b' },
+            { name: 'Yellow', rgb: '234, 179, 8', hex: '#eab308' },
+            { name: 'Lime', rgb: '132, 204, 22', hex: '#84cc16' },
+            { name: 'Green', rgb: '34, 197, 94', hex: '#22c55e' },
+            { name: 'Emerald', rgb: '16, 185, 129', hex: '#10b981' },
+            { name: 'Teal', rgb: '20, 184, 166', hex: '#14b8a6' },
+            { name: 'Cyan', rgb: '6, 182, 212', hex: '#06b6d4' },
+            { name: 'Blue', rgb: '59, 130, 246', hex: '#3b82f6' },
+            { name: 'Indigo', rgb: '99, 102, 241', hex: '#6366f1' },
+            { name: 'Violet', rgb: '139, 92, 246', hex: '#8b5cf6' }
+        ];
 
-  <script>
-    const html = document.documentElement;
-    const themeIcon = document.getElementById('themeIcon');
+        const pickerContainer = document.getElementById('colorPicker');
+        let activeBtn = null;
 
-    const subjects = [
-      { name: 'Physics',           icon: '⚛️' },
-      { name: 'Chemistry',         icon: '🧪' },
-      { name: 'Biology',           icon: '🧬' },
-      { name: 'Mathematics',       icon: '∑'  },
-      { name: 'English',           icon: '📚' },
-      { name: 'History',           icon: '📜' },
-      { name: 'Geography',         icon: '🗺️' },
-      { name: 'Economics',         icon: '💹' },
-      { name: 'Political Science', icon: '⚖️' },
-      { name: 'Accountancy',       icon: '🧾' },
-      { name: 'Business Studies',  icon: '📊' },
-      { name: 'Computer Science',  icon: '💻' },
-      { name: 'Physical Education',icon: '🏃' },
-      { name: 'Sociology',         icon: '🤝' },
-      { name: 'Psychology',        icon: '🧠' },
-      { name: 'Fine Arts',         icon: '🎨' },
-    ];
+        colors.forEach((color, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'color-btn' + (color.name === 'Blue' ? ' active' : '');
+            btn.style.backgroundColor = color.hex;
+            btn.setAttribute('aria-label', `Set accent color to ${color.name}`);
+            
+            if (color.name === 'Blue') activeBtn = btn;
 
-    function initTheme() {
-      const t = localStorage.getItem('theme') || 'dark';
-      const c = localStorage.getItem('color') || 'indigo';
-      html.setAttribute('data-theme', t);
-      html.setAttribute('data-color', c);
-      updateThemeIcon(t);
-      updateColorActive(c);
-    }
+            btn.addEventListener('click', () => {
+                document.documentElement.style.setProperty('--glow', color.rgb);
+                if (activeBtn) activeBtn.classList.remove('active');
+                btn.classList.add('active');
+                activeBtn = btn;
+            });
+            pickerContainer.appendChild(btn);
+        });
 
-    function toggleTheme() {
-      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      updateThemeIcon(next);
-    }
+        // --- 2. Theme Toggle Logic ---
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            
+            // Swap icon
+            if (isLight) {
+                themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+            } else {
+                themeToggle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+            }
+        });
 
-    function updateThemeIcon(theme) {
-      themeIcon.innerHTML = theme === 'light'
-        ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
-        : '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-    }
+        // --- 3. Disclaimer Dropdown Logic ---
+        const disclaimerBtn = document.getElementById('disclaimerBtn');
+        const disclaimerContent = document.getElementById('disclaimerContent');
 
-    function toggleColorPalette() {
-      document.getElementById('colorPalette').classList.toggle('show');
-    }
+        disclaimerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            disclaimerContent.classList.toggle('show');
+        });
 
-    function setColor(color) {
-      html.setAttribute('data-color', color);
-      localStorage.setItem('color', color);
-      updateColorActive(color);
-      document.getElementById('colorPalette').classList.remove('show');
-    }
+        document.addEventListener('click', (e) => {
+            if (!disclaimerContent.contains(e.target) && e.target !== disclaimerBtn) {
+                disclaimerContent.classList.remove('show');
+            }
+        });
 
-    function updateColorActive(color) {
-      document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('active'));
-      const el = document.querySelector('.color-swatch.' + color);
-      if (el) el.classList.add('active');
-    }
+        // --- 4. Infinite Carousel Logic ---
+        const carouselData = [
+            "Mathematics", "Physics", "Chemistry", "Biology", 
+            "Computer Science", "Accountancy", "Economics", "History"
+        ];
+        
+        const track = document.getElementById('carouselTrack');
+        
+        // Helper to generate items with a star icon
+        const generateItems = () => {
+            return carouselData.map(text => `
+                <div class="carousel-item">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    ${text}
+                </div>
+            `).join('');
+        };
 
-    function toggleDisc() {
-      document.getElementById('discDrop').classList.toggle('show');
-    }
-
-    function initCarousel() {
-      const track = document.getElementById('carouselTrack');
-      const buildSet = () => subjects.map(s =>
-        '<span class="subject-item"><span class="subject-pill"><span class="subject-icon">' + s.icon + '</span>' + s.name + '</span><span class="subject-pipe">|</span></span>'
-      ).join('');
-      track.innerHTML = buildSet() + buildSet() + buildSet() + buildSet();
-    }
-
-    document.addEventListener('click', function(e) {
-      if (!e.target.closest('.disclaimer-btn') && !e.target.closest('.disc-drop')) {
-        document.getElementById('discDrop').classList.remove('show');
-      }
-      if (!e.target.closest('.color-picker')) {
-        document.getElementById('colorPalette').classList.remove('show');
-      }
-    });
-
-    initTheme();
-    initCarousel();
-  </script>
+        // Render duplicate sets for seamless infinite scrolling
+        track.innerHTML = generateItems() + generateItems() + generateItems();
+    </script>
 </body>
 </html>
