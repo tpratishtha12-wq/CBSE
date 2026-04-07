@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-color="indigo">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CBSEHub — Study Dashboard</title>
+  <meta name="description" content="Your smart Class 12 CBSE study companion. Track goals, manage tasks, and stay focused."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:opsz,wght@14..32,300;14..32,400;14..32,450;14..32,500;14..32,600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    [data-color="indigo"]   { --c1:#818cf8;--c2:#a78bfa;--c3:#ec4899;--c1-rgb:129,140,248;--c2-rgb:167,139,250;--c3-rgb:236,72,153; }
+    [data-color="violet"]   { --c1:#a78bfa;--c2:#c084fc;--c3:#f472b6;--c1-rgb:167,139,250;--c2-rgb:192,132,252;--c3-rgb:244,114,182; }
+    [data-color="rose"]     { --c1:#fb7185;--c2:#f472b6;--c3:#c084fc;--c1-rgb:251,113,133;--c2-rgb:244,114,182;--c3-rgb:192,132,252; }
+    [data-color="emerald"]  { --c1:#34d399;--c2:#2dd4bf;--c3:#60a5fa;--c1-rgb:52,211,153;--c2-rgb:45,212,191;--c3-rgb:96,165,250; }
+    [data-color="amber"]    { --c1:#fbbf24;--c2:#f59e0b;--c3:#fb923c;--c1-rgb:251,191,36;--c2-rgb:245,158,11;--c3-rgb:251,146,60; }
+    [data-color="cyan"]     { --c1:#22d3ee;--c2:#38bdf8;--c3:#818cf8;--c1-rgb:34,211,238;--c2-rgb:56,189,248;--c3-rgb:129,140,248; }
+
+    :root, [data-theme="dark"] {
+      --bg:#06060b;--bg-warm:#0c0c14;--surface:#111119;--surface-2:#181822;--surface-3:#1e1e2a;
+      --border:rgba(255,255,255,.06);--border-2:rgba(255,255,255,.1);--border-3:rgba(255,255,255,.14);
+      --text:#f0f0f6;--text-secondary:rgba(240,240,246,.55);--muted:rgba(240,240,246,.35);--muted-2:rgba(240,240,246,.18);
+      --accent:var(--c1);--accent-soft:rgba(var(--c1-rgb),.1);
+      --green:#34d399;--green-soft:rgba(52,211,153,.08);--amber:#fbbf24;--amber-soft:rgba(251,191,36,.06);--red:#fb7185;--red-soft:rgba(251,113,133,.08);
+      --radius:14px;--radius-sm:10px;--radius-xs:6px;
+      --shadow-sm:0 1px 2px rgba(0,0,0,.5);--shadow:0 4px 24px rgba(0,0,0,.6);--shadow-lg:0 16px 48px rgba(0,0,0,.7);
+      --sidebar-bg:#0a0a12;--sidebar-w:260px;
+      --font-d:'Instrument Serif',Georgia,serif;--font-b:'Inter',system-ui,sans-serif;--font-m:'Geist Mono','SF Mono',monospace;
+    }
+    [data-theme="light"] {
+      --bg:#f5f5f7;--bg-warm:#eeeef0;--surface:#ffffff;--surface-2:#f0f0f2;--surface-3:#e8e8ec;
+      --border:rgba(0,0,0,.06);--border-2:rgba(0,0,0,.1);--border-3:rgba(0,0,0,.14);
+      --text:#18181b;--text-secondary:rgba(24,24,27,.52);--muted:rgba(24,24,27,.35);--muted-2:rgba(24,24,27,.18);
+      --accent:var(--c1);--accent-soft:rgba(var(--c1-rgb),.08);
+      --green:#16a34a;--green-soft:rgba(22,163,74,.06);--amber:#d97706;--amber-soft:rgba(217,119,6,.06);--red:#e11d48;--red-soft:rgba(225,29,72,.06);
+      --shadow-sm:0 1px 3px rgba(0,0,0,.04);--shadow:0 4px 16px rgba(0,0,0,.06);--shadow-lg:0 12px 40px rgba(0,0,0,.08);
+      --sidebar-bg:#f0f0f2;
+    }
+
+    html { scroll-behavior: smooth; }
+    html.theme-transition, html.theme-transition *, html.theme-transition *::before, html.theme-transition *::after {
+      transition: background-color .4s ease, color .4s ease, border-color .4s ease, box-shadow .4s ease !important;
+    }
+    body { font-family:var(--font-b);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh; }
+    a { text-decoration:none; color:inherit; }
+
+    .app-layout { display:flex; min-height:100vh; }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar { width:var(--sidebar-w);min-height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:33px;left:0;bottom:0;z-index:40;transition:transform .3s cubic-bezier(.16,1,.3,1),background .3s; }
+    .sidebar-header { padding:1.5rem 1.25rem 1rem;border-bottom:1px solid var(--border); }
+    .sidebar-brand { display:flex;align-items:center;gap:.6rem;margin-bottom:1rem; }
+    .brand-icon { width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:.9rem;color:#fff; }
+    .brand-name { font-family:var(--font-d);font-size:1.15rem;color:var(--text);letter-spacing:-.02em; }
+    .brand-name span { color:var(--accent); }
+    .sidebar-profile { display:flex;align-items:center;gap:.65rem;padding:.7rem .65rem;background:var(--surface);border-radius:var(--radius-sm);border:1px solid var(--border); }
+    .sidebar-profile .avatar { width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(var(--c1-rgb),.2),rgba(var(--c2-rgb),.15));display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+    .sidebar-profile .avatar svg { width:16px;height:16px;color:var(--accent); }
+    .sidebar-profile .profile-info { flex:1;min-width:0; }
+    .sidebar-profile .profile-name { font-size:.82rem;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .sidebar-profile .profile-xp { font-size:.65rem;font-weight:550;color:var(--accent);letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:.3rem; }
+    .xp-dot { width:4px;height:4px;border-radius:50%;background:var(--accent); }
+    .sidebar-search { padding:1rem 1.25rem .5rem; }
+    .search-box { display:flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.55rem .75rem;transition:border-color .2s; }
+    .search-box:focus-within { border-color:rgba(var(--c1-rgb),.3); }
+    .search-box svg { color:var(--muted);flex-shrink:0;width:15px;height:15px; }
+    .search-box input { background:none;border:none;outline:none;font-family:var(--font-b);font-size:.78rem;color:var(--text);width:100%; }
+    .search-box input::placeholder { color:var(--muted); }
+    .sidebar-nav { flex:1;padding:.75rem;display:flex;flex-direction:column;gap:.15rem; }
+    .nav-item { display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:var(--radius-sm);font-size:.82rem;font-weight:450;color:var(--text-secondary);cursor:pointer;transition:all .2s;position:relative; }
+    .nav-item:hover { color:var(--text);background:var(--surface); }
+    .nav-item.active { color:var(--accent);background:var(--accent-soft); }
+    .nav-item.active::before { content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;border-radius:0 3px 3px 0;background:var(--accent); }
+    .nav-item svg { width:18px;height:18px;flex-shrink:0; }
+    .nav-badge { margin-left:auto;background:var(--red);color:#fff;font-size:.6rem;font-weight:600;padding:.1rem .45rem;border-radius:100px; }
+    .sidebar-bottom { padding:1rem 1.25rem;border-top:1px solid var(--border); }
+    .btn-focus-session { width:100%;display:flex;align-items:center;justify-content:center;gap:.5rem;background:var(--accent);color:#fff;font-family:var(--font-b);font-size:.82rem;font-weight:500;padding:.7rem 1rem;border-radius:var(--radius-sm);border:none;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 2px 16px rgba(var(--c1-rgb),.25); }
+    .btn-focus-session:hover { filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 24px rgba(var(--c1-rgb),.35); }
+    .btn-focus-session svg { width:16px;height:16px; }
+
+    /* ─── MAIN ─── */
+    .main-content { flex:1;margin-left:var(--sidebar-w);padding:calc(33px + 1.75rem) 2rem 3rem;max-width:100%; }
+    .main-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem; }
+    .main-header h1 { font-family:var(--font-d);font-size:1.8rem;font-weight:400;letter-spacing:-.03em;color:var(--text); }
+    .main-header h1 span { color:var(--accent); }
+    .header-actions { display:flex;gap:.5rem;align-items:center; }
+    .header-icon-btn { width:38px;height:38px;border-radius:100px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;color:var(--text-secondary);position:relative; }
+    .header-icon-btn:hover { border-color:var(--border-2);color:var(--text);background:var(--surface-2); }
+    .header-icon-btn svg { width:16px;height:16px; }
+    .notif-dot { position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--red);border:1.5px solid var(--surface); }
+
+    .dashboard-grid { display:grid;grid-template-columns:1fr 340px;gap:1.5rem; }
+
+    /* ─── SECTION CARDS ─── */
+    .section-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;transition:border-color .2s; }
+    .section-card:hover { border-color:var(--border-2); }
+    .section-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:1.15rem; }
+    .section-title { font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--accent); }
+    .section-btn { font-size:.74rem;font-weight:500;color:var(--accent);cursor:pointer;transition:opacity .2s;background:none;border:none;font-family:var(--font-b); }
+    .section-btn:hover { opacity:.7; }
+    .left-col { display:flex;flex-direction:column;gap:1.5rem; }
+    .right-col { display:flex;flex-direction:column;gap:1.5rem; }
+
+    /* ─── ACTIVE GOAL ─── */
+    .goal-cards { display:grid;grid-template-columns:1fr 1fr;gap:.75rem; }
+    .goal-card { background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.85rem .9rem;transition:all .2s; }
+    .goal-card:hover { border-color:var(--border-2); }
+    .goal-card-icon { width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:.55rem; }
+    .goal-card-icon.cal { background:rgba(var(--c1-rgb),.1);color:var(--c1); }
+    .goal-card-icon.rem { background:var(--amber-soft);color:var(--amber); }
+    .goal-card-icon.tgt { background:var(--green-soft);color:var(--green); }
+    .goal-card-icon svg { width:14px;height:14px; }
+    .goal-card-label { font-size:.68rem;font-weight:550;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.25rem; }
+    .goal-card-value { font-size:.78rem;font-weight:450;color:var(--text);line-height:1.4; }
+    .goal-card-value.not-set { color:var(--muted-2);font-style:italic;font-weight:400; }
+    .goal-card-set { display:inline-flex;align-items:center;gap:.3rem;font-size:.68rem;font-weight:500;color:var(--accent);cursor:pointer;margin-top:.4rem;background:none;border:none;font-family:var(--font-b);padding:0;transition:opacity .2s; }
+    .goal-card-set:hover { opacity:.7; }
+    .goal-card-set svg { width:11px;height:11px; }
+
+    /* ─── DAILY TASKS ─── */
+    .tasks-list { display:flex;flex-direction:column;gap:.4rem; }
+    .task-item { display:flex;align-items:center;gap:.75rem;padding:.75rem .85rem;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .2s;cursor:pointer; }
+    .task-item:hover { border-color:var(--border-2); }
+    .task-item.completed { opacity:.45; }
+    .task-item.completed .task-text { text-decoration:line-through; }
+    .task-checkbox { width:20px;height:20px;border-radius:50%;border:2px solid var(--border-3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s;cursor:pointer; }
+    .task-checkbox.checked { background:var(--accent);border-color:var(--accent); }
+    .task-checkbox.checked svg { opacity:1; }
+    .task-checkbox svg { width:11px;height:11px;color:#fff;opacity:0;transition:opacity .2s; }
+    .task-text { flex:1;font-size:.82rem;font-weight:450;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+    .task-priority { font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:.15rem .45rem;border-radius:4px;white-space:nowrap; }
+    .task-priority.high { background:var(--red-soft);color:var(--red); }
+    .task-priority.medium { background:var(--amber-soft);color:var(--amber); }
+    .task-priority.low { background:var(--green-soft);color:var(--green); }
+    .task-add { display:flex;align-items:center;gap:.5rem;padding:.7rem .85rem;color:var(--muted);font-size:.78rem;cursor:pointer;border-radius:var(--radius-sm);transition:all .2s;border:1px dashed var(--border);background:none;width:100%;font-family:var(--font-b); }
+    .task-add:hover { border-color:var(--border-2);color:var(--text-secondary);background:var(--surface-2); }
+    .task-add svg { width:14px;height:14px; }
+    .task-input-row { display:flex;gap:.5rem;margin-top:.4rem; }
+    .task-input-row input { flex:1;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem .8rem;font-family:var(--font-b);font-size:.8rem;color:var(--text);outline:none;transition:border-color .2s; }
+    .task-input-row input:focus { border-color:rgba(var(--c1-rgb),.3); }
+    .task-input-row input::placeholder { color:var(--muted); }
+    .task-input-row select { background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.6rem .5rem;font-family:var(--font-b);font-size:.72rem;font-weight:500;color:var(--text-secondary);outline:none;cursor:pointer;appearance:none; }
+    .task-input-row select option { background:var(--surface); }
+    .task-add-btn { padding:.6rem .9rem;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--font-b);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap; }
+    .task-add-btn:hover { filter:brightness(1.1); }
+
+    /* ─── POMODORO TIMER ─── */
+    .timer-card { text-align:center; }
+    .timer-ring-wrap { position:relative;width:200px;height:200px;margin:0 auto 1.25rem; }
+    .timer-ring-wrap svg { width:200px;height:200px;transform:rotate(-90deg); }
+    .timer-ring-bg { fill:none;stroke:var(--border);stroke-width:4; }
+    .timer-ring-progress { fill:none;stroke:var(--accent);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset .5s ease;filter:drop-shadow(0 0 8px rgba(var(--c1-rgb),.3)); }
+    .timer-display { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center; }
+    .timer-time { font-family:var(--font-m);font-size:2.6rem;font-weight:500;color:var(--text);letter-spacing:-.02em;line-height:1; }
+    .timer-label { font-size:.72rem;color:var(--text-secondary);margin-top:.3rem;font-weight:450; }
+    .timer-subject { font-size:.78rem;color:var(--text-secondary);margin-bottom:1.25rem;font-weight:350; }
+    .timer-controls { display:flex;gap:.5rem;justify-content:center;margin-bottom:1rem; }
+    .timer-btn { display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem 1.4rem;border-radius:100px;font-family:var(--font-b);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .25s cubic-bezier(.4,0,.2,1);border:none; }
+    .timer-btn-primary { background:var(--accent);color:#fff;box-shadow:0 2px 16px rgba(var(--c1-rgb),.25); }
+    .timer-btn-primary:hover { filter:brightness(1.1);transform:translateY(-1px); }
+    .timer-btn-secondary { background:var(--surface-2);color:var(--text-secondary);border:1px solid var(--border); }
+    .timer-btn-secondary:hover { color:var(--text);border-color:var(--border-2); }
+    .timer-btn svg { width:14px;height:14px; }
+    .timer-settings-toggle { font-size:.72rem;color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:.3rem;transition:color .2s;background:none;border:none;font-family:var(--font-b);margin-top:.5rem; }
+    .timer-settings-toggle:hover { color:var(--text-secondary); }
+    .timer-settings-toggle svg { width:12px;height:12px; }
+    .timer-settings { display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);text-align:left; }
+    .timer-settings.active { display:block; }
+    .timer-setting-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:.65rem; }
+    .timer-setting-row:last-child { margin-bottom:0; }
+    .timer-setting-label { font-size:.75rem;color:var(--text-secondary);font-weight:450; }
+    .timer-setting-input { display:flex;align-items:center;gap:.35rem; }
+    .timer-setting-input button { width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:.9rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:var(--font-b); }
+    .timer-setting-input button:hover { border-color:var(--border-2);background:var(--surface-3); }
+    .timer-setting-input .time-val { font-family:var(--font-m);font-size:.82rem;color:var(--text);min-width:38px;text-align:center;font-weight:500; }
+    .timer-setting-input .time-unit { font-size:.68rem;color:var(--muted);font-weight:450; }
+
+    /* ─── STREAK ─── */
+    .streak-card { display:flex;align-items:center;gap:1rem; }
+    .streak-number { font-family:var(--font-d);font-size:3rem;font-weight:400;color:var(--muted-2);line-height:1;letter-spacing:-.03em; }
+    .streak-number.active { color:var(--red); }
+    .streak-fire { font-size:1.5rem;display:inline-block; }
+    .streak-number.active .streak-fire { animation:flicker 1.5s ease-in-out infinite alternate; }
+    @keyframes flicker { 0%{transform:scale(1) rotate(-3deg);} 100%{transform:scale(1.08) rotate(3deg);} }
+    .streak-info { flex:1; }
+    .streak-text { font-size:.82rem;font-weight:500;color:var(--text);margin-bottom:.15rem; }
+    .streak-sub { font-size:.72rem;color:var(--text-secondary); }
+    .streak-dots { display:flex;gap:4px;margin-top:.5rem; }
+    .streak-dot { width:8px;height:8px;border-radius:50%;background:var(--border-2); }
+    .streak-dot.done { background:var(--accent); }
+    .streak-dot.today { background:var(--accent);box-shadow:0 0 0 2px rgba(var(--c1-rgb),.25); }
+
+    /* ─── REMINDERS ─── */
+    .reminder-list { display:flex;flex-direction:column;gap:.4rem; }
+    .reminder-item { display:flex;align-items:center;gap:.65rem;padding:.65rem .75rem;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);transition:all .2s; }
+    .reminder-item:hover { border-color:var(--border-2); }
+    .reminder-tag { font-size:.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:.18rem .5rem;border-radius:4px;white-space:nowrap; }
+    .reminder-tag.purple { background:rgba(var(--c1-rgb),.1);color:var(--c1); }
+    .reminder-tag.red { background:var(--red-soft);color:var(--red); }
+    .reminder-tag.blue { background:rgba(96,165,250,.1);color:#60a5fa; }
+    .reminder-tag.green { background:var(--green-soft);color:var(--green); }
+    .reminder-text { flex:1;font-size:.78rem;font-weight:450;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .reminder-time { font-size:.68rem;color:var(--muted);white-space:nowrap; }
+    .reminder-del { background:none;border:none;color:var(--muted-2);cursor:pointer;padding:2px;display:flex;align-items:center;transition:color .2s;flex-shrink:0; }
+    .reminder-del:hover { color:var(--red); }
+    .reminder-del svg { width:13px;height:13px; }
+    .reminder-empty { font-size:.78rem;color:var(--muted);text-align:center;padding:1.25rem 1rem;border:1px dashed var(--border);border-radius:var(--radius-sm); }
+
+    /* ─── RECENTLY VIEWED ─── */
+    .recent-grid { display:grid;grid-template-columns:1fr 1fr;gap:.65rem; }
+    .recent-card { background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.85rem;transition:all .2s;cursor:pointer; }
+    .recent-card:hover { border-color:var(--border-2);transform:translateY(-1px); }
+    .recent-icon { width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;margin-bottom:.55rem;font-size:.9rem; }
+    .recent-icon.doc { background:rgba(var(--c1-rgb),.1); }
+    .recent-icon.vid { background:var(--red-soft); }
+    .recent-icon.math { background:var(--green-soft); }
+    .recent-icon.book { background:var(--amber-soft); }
+    .recent-icon svg { width:15px;height:15px;color:var(--accent); }
+    .recent-title { font-size:.78rem;font-weight:500;color:var(--text);margin-bottom:.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+    .recent-meta { font-size:.65rem;color:var(--muted); }
+    .recent-empty { font-size:.78rem;color:var(--muted);text-align:center;padding:1.5rem 1rem;border:1px dashed var(--border);border-radius:var(--radius-sm);grid-column:1/-1; }
+
+    /* ─── MODAL ─── */
+    .modal-overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px); }
+    .modal-overlay.active { display:flex; }
+    .modal-box { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.75rem;width:400px;max-width:90vw;animation:fadeUp .3s cubic-bezier(.16,1,.3,1); }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+    .modal-title { font-family:var(--font-d);font-size:1.3rem;color:var(--text);margin-bottom:1.25rem; }
+    .modal-field { margin-bottom:1rem; }
+    .modal-field label { display:block;font-size:.72rem;font-weight:550;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem; }
+    .modal-field input, .modal-field select { width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.65rem .85rem;font-family:var(--font-b);font-size:.84rem;color:var(--text);outline:none;transition:border-color .2s; }
+    .modal-field input:focus, .modal-field select:focus { border-color:rgba(var(--c1-rgb),.3); }
+    .modal-field input::placeholder { color:var(--muted); }
+    .modal-field select { appearance:none;cursor:pointer; }
+    .modal-field select option { background:var(--surface); }
+    .modal-actions { display:flex;gap:.5rem;justify-content:flex-end;margin-top:1.5rem; }
+    .modal-btn { padding:.6rem 1.2rem;border-radius:var(--radius-sm);font-family:var(--font-b);font-size:.82rem;font-weight:500;cursor:pointer;transition:all .2s;border:none; }
+    .modal-btn-cancel { background:var(--surface-2);color:var(--text-secondary);border:1px solid var(--border); }
+    .modal-btn-cancel:hover { color:var(--text);border-color:var(--border-2); }
+    .modal-btn-primary { background:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(var(--c1-rgb),.2); }
+    .modal-btn-primary:hover { filter:brightness(1.1); }
+
+    .mobile-menu-btn { display:none;width:38px;height:38px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);align-items:center;justify-content:center;cursor:pointer;color:var(--text); }
+    .mobile-menu-btn svg { width:18px;height:18px; }
+
+    /* ─── BETA BANNER ─── */
+    .beta-banner { position:fixed;top:0;left:0;right:0;background:linear-gradient(90deg,rgba(var(--c1-rgb),.08) 0%,rgba(var(--c2-rgb),.06) 50%,rgba(var(--c1-rgb),.08) 100%);border-bottom:1px solid rgba(var(--c1-rgb),.1);text-align:center;padding:.5rem 1.5rem;font-size:.74rem;font-weight:450;color:var(--text-secondary);letter-spacing:-.01em;z-index:60;overflow:hidden; }
+    .beta-banner::before { content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(var(--c1-rgb),.04),transparent);animation:banner-shimmer 4s ease-in-out infinite; }
+    @keyframes banner-shimmer { 0%,100%{opacity:0;transform:translateX(-100%);} 50%{opacity:1;transform:translateX(100%);} }
+    .beta-banner-inner { display:inline-flex;align-items:center;gap:.55rem;position:relative;z-index:1; }
+    .beta-tag { display:inline-flex;align-items:center;gap:.25rem;background:rgba(var(--c1-rgb),.12);color:var(--accent);font-size:.62rem;font-weight:600;letter-spacing:.06em;padding:.18rem .55rem;border-radius:4px;text-transform:uppercase;border:1px solid rgba(var(--c1-rgb),.15);white-space:nowrap; }
+    .beta-tag::before { content:'';width:4px;height:4px;border-radius:50%;background:var(--accent);animation:pulse-dot 2.5s ease-in-out infinite; }
+    [data-theme="light"] .beta-banner { background:linear-gradient(90deg,rgba(var(--c1-rgb),.04) 0%,rgba(var(--c2-rgb),.03) 50%,rgba(var(--c1-rgb),.04) 100%);border-bottom-color:rgba(var(--c1-rgb),.08); }
+    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.5;transform:scale(.8);} }
+
+    @media(max-width:1024px) { .dashboard-grid{grid-template-columns:1fr;} .right-col{order:-1;} .recent-grid{grid-template-columns:1fr 1fr;} }
+    @media(max-width:768px) { .sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg);} .mobile-menu-btn{display:flex;} .main-content{margin-left:0;padding:calc(33px + 1.25rem) 1rem 2rem;} .main-header h1{font-size:1.4rem;} .goal-cards{grid-template-columns:1fr;} .timer-ring-wrap{width:170px;height:170px;} .timer-ring-wrap svg{width:170px;height:170px;} .timer-time{font-size:2.2rem;} }
+    ::-webkit-scrollbar{width:6px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px;} ::-webkit-scrollbar-thumb:hover{background:var(--border-3);}
+  </style>
+</head>
+<body>
+
+  <!-- Beta Banner -->
+  <div class="beta-banner">
+    <div class="beta-banner-inner">
+      <span class="beta-tag">Beta</span>
+      <span>Work in progress — resources and features are being added regularly.</span>
+    </div>
+  </div>
+
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="brand-icon">C</div>
+          <div class="brand-name">CBSE<span>Hub</span></div>
+        </div>
+        <div class="sidebar-profile">
+          <div class="avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="profile-info">
+            <div class="profile-name">Student</div>
+            <div class="profile-xp"><span class="xp-dot"></span>Level 1 &middot; 0 XP</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search chapters, notes..."/>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </div>
+        <div class="nav-item" data-page="resources" onclick="window.location.href='https://cbse-study-hub.vercel.app/resources'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          Resources
+        </div>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="btn-focus-session" onclick="scrollToTimer()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Start Focus Session
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="main-header">
+        <div style="display:flex;align-items:center;gap:.75rem;">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <h1>Good <span>evening</span></h1>
+        </div>
+        <div class="header-actions">
+          <button class="header-icon-btn" title="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="left-col">
+
+          <!-- Active Goal — 3 independent cards -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-title">Study Goals</span>
+            </div>
+            <div class="goal-cards">
+              <div class="goal-card">
+                <div class="goal-card-icon tgt">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                </div>
+                <div class="goal-card-label">What to Achieve</div>
+                <div class="goal-card-value not-set" id="goalAchieve">Not set</div>
+                <button class="goal-card-set" onclick="openInlineModal('achieve')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Set goal
+                </button>
+              </div>
+              <div class="goal-card">
+                <div class="goal-card-icon cal">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="goal-card-label">Today's Focus</div>
+                <div class="goal-card-value not-set" id="goalFocus">Not set</div>
+                <button class="goal-card-set" onclick="openInlineModal('focus')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Set focus
+                </button>
+              </div>
+              <div class="goal-card">
+                <div class="goal-card-icon rem">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <div class="goal-card-label">Reminder</div>
+                <div class="goal-card-value not-set" id="goalReminder">Not set</div>
+                <button class="goal-card-set" onclick="openInlineModal('reminder')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Set reminder
+                </button>
+              </div>
+              <div class="goal-card">
+                <div class="goal-card-icon" style="background:rgba(var(--c1-rgb),.1);color:var(--c1);">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div class="goal-card-label">Focus Time Today</div>
+                <div class="goal-card-value" id="focusTimeToday" style="font-family:var(--font-m);font-size:.9rem;">0m</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Daily Study Tasks — starts empty -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-title">Daily Study Tasks</span>
+              <button class="section-btn" onclick="clearCompleted()">Clear Completed</button>
+            </div>
+            <div class="tasks-list" id="tasksList"></div>
+            <div id="taskAddArea" style="margin-top:.5rem;">
+              <button class="task-add" onclick="showTaskInput()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add a new task...
+              </button>
+            </div>
+            <div id="taskInputArea" style="display:none;margin-top:.5rem;">
+              <div class="task-input-row">
+                <input type="text" id="newTaskInput" placeholder="What do you need to study?"/>
+                <select id="newTaskPriority">
+                  <option value="medium">Med</option>
+                  <option value="high">High</option>
+                  <option value="low">Low</option>
+                </select>
+                <button class="task-add-btn" onclick="addTask()">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recently Viewed — dynamic from localStorage -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-title">Recently Viewed</span>
+            </div>
+            <div class="recent-grid" id="recentGrid">
+              <div class="recent-empty">No recently viewed resources yet. Browse resources to see them here.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="right-col">
+
+          <!-- Pomodoro Timer -->
+          <div class="section-card timer-card" id="timerSection">
+            <div class="section-header" style="justify-content:center;">
+              <span class="section-title">Focus Hub</span>
+            </div>
+            <div class="timer-ring-wrap">
+              <svg viewBox="0 0 200 200">
+                <circle class="timer-ring-bg" cx="100" cy="100" r="88"/>
+                <circle class="timer-ring-progress" id="timerRing" cx="100" cy="100" r="88" stroke-dasharray="553" stroke-dashoffset="0"/>
+              </svg>
+              <div class="timer-display">
+                <div class="timer-time" id="timerTime">25:00</div>
+                <div class="timer-label" id="timerStateLabel">Ready to focus</div>
+              </div>
+            </div>
+            <div class="timer-subject" id="timerSubject">Ready for today's session?</div>
+            <div class="timer-controls">
+              <button class="timer-btn timer-btn-primary" id="timerStartBtn" onclick="toggleTimer()">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" id="playIcon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" id="pauseIcon" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+                <span id="timerBtnText">Start Session</span>
+              </button>
+              <button class="timer-btn timer-btn-secondary" onclick="resetTimer()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+                Reset
+              </button>
+            </div>
+            <button class="timer-settings-toggle" onclick="toggleTimerSettings()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+              Timer Settings
+            </button>
+            <div class="timer-settings" id="timerSettings">
+              <div class="timer-setting-row">
+                <span class="timer-setting-label">Focus Duration</span>
+                <div class="timer-setting-input">
+                  <button onclick="adjustTime('focus',-5)">−</button>
+                  <span class="time-val" id="focusTimeVal">25</span>
+                  <span class="time-unit">min</span>
+                  <button onclick="adjustTime('focus',5)">+</button>
+                </div>
+              </div>
+              <div class="timer-setting-row">
+                <span class="timer-setting-label">Short Break</span>
+                <div class="timer-setting-input">
+                  <button onclick="adjustTime('short',-1)">−</button>
+                  <span class="time-val" id="shortTimeVal">5</span>
+                  <span class="time-unit">min</span>
+                  <button onclick="adjustTime('short',1)">+</button>
+                </div>
+              </div>
+              <div class="timer-setting-row">
+                <span class="timer-setting-label">Long Break</span>
+                <div class="timer-setting-input">
+                  <button onclick="adjustTime('long',-5)">−</button>
+                  <span class="time-val" id="longTimeVal">15</span>
+                  <span class="time-unit">min</span>
+                  <button onclick="adjustTime('long',5)">+</button>
+                </div>
+              </div>
+              <div class="timer-setting-row">
+                <span class="timer-setting-label">Sessions until long break</span>
+                <div class="timer-setting-input">
+                  <button onclick="adjustTime('rounds',-1)">−</button>
+                  <span class="time-val" id="roundsVal">4</span>
+                  <span class="time-unit">rounds</span>
+                  <button onclick="adjustTime('rounds',1)">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day Streak — starts at 0 -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-title">Day Streak</span>
+            </div>
+            <div class="streak-card" id="streakCard">
+              <div class="streak-number" id="streakNumber"><span class="streak-fire">🔥</span> 0</div>
+              <div class="streak-info">
+                <div class="streak-text" id="streakText">Start your streak!</div>
+                <div class="streak-sub" id="streakSub">Complete a focus session to begin</div>
+                <div class="streak-dots" id="streakDots">
+                  <div class="streak-dot today"></div>
+                  <div class="streak-dot"></div>
+                  <div class="streak-dot"></div>
+                  <div class="streak-dot"></div>
+                  <div class="streak-dot"></div>
+                  <div class="streak-dot"></div>
+                  <div class="streak-dot"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reminders — starts empty -->
+          <div class="section-card">
+            <div class="section-header">
+              <span class="section-title">Reminders</span>
+              <button class="section-btn" onclick="openReminderModal()">Add</button>
+            </div>
+            <div id="reminderList">
+              <div class="reminder-empty">No reminders yet. Add one to stay on track.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ─── INLINE GOAL MODAL ─── -->
+  <div class="modal-overlay" id="goalInlineModal">
+    <div class="modal-box">
+      <div class="modal-title" id="goalModalTitle">Set Goal</div>
+      <div class="modal-field">
+        <label id="goalModalLabel">Goal</label>
+        <input type="text" id="goalModalInput" placeholder=""/>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="closeInlineModal()">Cancel</button>
+        <button class="modal-btn modal-btn-primary" onclick="saveInlineGoal()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── REMINDER MODAL ─── -->
+  <div class="modal-overlay" id="reminderModal">
+    <div class="modal-box">
+      <div class="modal-title">Add Reminder</div>
+      <div class="modal-field">
+        <label>Task</label>
+        <input type="text" id="reminderInput" placeholder="e.g. Chemistry test on Friday"/>
+      </div>
+      <div class="modal-field">
+        <label>Subject Tag</label>
+        <select id="reminderTag">
+          <option value="purple">Physics</option>
+          <option value="red">Biology</option>
+          <option value="blue">Maths</option>
+          <option value="green">Chemistry</option>
+          <option value="purple">English</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>When</label>
+        <input type="text" id="reminderWhen" placeholder="e.g. Today, Tomorrow, Friday"/>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="closeReminderModal()">Cancel</button>
+        <button class="modal-btn modal-btn-primary" onclick="saveReminder()">Add Reminder</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ═══════════════════════════════════
+       THEME
+       ═══════════════════════════════════ */
+    function getSettings() {
+      return { mode: localStorage.getItem('cbsehub-mode')||'dark', color: localStorage.getItem('cbsehub-color')||'indigo' };
+    }
+    function applySettings(m,c) {
+      document.documentElement.setAttribute('data-theme',m);
+      document.documentElement.setAttribute('data-color',c);
+      localStorage.setItem('cbsehub-mode',m);
+      localStorage.setItem('cbsehub-color',c);
+    }
+    (function(){ var s=getSettings(); applySettings(s.mode,s.color); })();
+
+    /* ═══════════════════════════════════
+       GREETING
+       ═══════════════════════════════════ */
+    (function(){
+      var h=new Date().getHours();
+      var g=h<12?'morning':h<17?'afternoon':'evening';
+      var el=document.querySelector('.main-header h1 span');
+      if(el) el.textContent=g;
+    })();
+
+    /* ═══════════════════════════════════
+       SIDEBAR
+       ═══════════════════════════════════ */
+    function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+    document.querySelectorAll('.nav-item').forEach(function(item){
+      item.addEventListener('click',function(){
+        document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+        this.classList.add('active');
+        if(window.innerWidth<=768) document.getElementById('sidebar').classList.remove('open');
+      });
+    });
+    document.addEventListener('click',function(e){
+      if(window.innerWidth<=768&&!e.target.closest('.sidebar')&&!e.target.closest('.mobile-menu-btn'))
+        document.getElementById('sidebar').classList.remove('open');
+    });
+    function scrollToTimer(){ document.getElementById('timerSection').scrollIntoView({behavior:'smooth',block:'start'}); }
+
+    /* ═══════════════════════════════════
+       TASKS — starts empty, persisted
+       ═══════════════════════════════════ */
+    function toggleTask(el){
+      var cb=el.querySelector('.task-checkbox');
+      cb.classList.toggle('checked'); el.classList.toggle('completed'); saveTasks();
+    }
+    function showTaskInput(){
+      document.getElementById('taskAddArea').style.display='none';
+      document.getElementById('taskInputArea').style.display='block';
+      document.getElementById('newTaskInput').focus();
+    }
+    function addTask(){
+      var input=document.getElementById('newTaskInput');
+      var priority=document.getElementById('newTaskPriority').value;
+      var text=input.value.trim();
+      if(!text) return;
+      var label=priority==='high'?'High':priority==='medium'?'Med':'Low';
+      var html='<div class="task-item" onclick="toggleTask(this)"><div class="task-checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span class="task-text">'+escapeHtml(text)+'</span><span class="task-priority '+priority+'">'+label+'</span></div>';
+      document.getElementById('tasksList').insertAdjacentHTML('beforeend',html);
+      input.value=''; document.getElementById('taskInputArea').style.display='none';
+      document.getElementById('taskAddArea').style.display='block'; saveTasks();
+    }
+    document.getElementById('newTaskInput').addEventListener('keydown',function(e){
+      if(e.key==='Enter') addTask();
+      if(e.key==='Escape'){ document.getElementById('taskInputArea').style.display='none'; document.getElementById('taskAddArea').style.display='block'; }
+    });
+    function clearCompleted(){
+      document.querySelectorAll('.task-item.completed').forEach(function(el){el.remove();}); saveTasks();
+    }
+    function escapeHtml(t){ var d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+    function saveTasks(){
+      var tasks=[];
+      document.querySelectorAll('.task-item').forEach(function(el){
+        tasks.push({ text:el.querySelector('.task-text').textContent, priority:el.querySelector('.task-priority').className.replace('task-priority ',''), completed:el.classList.contains('completed') });
+      });
+      localStorage.setItem('cbsehub-tasks',JSON.stringify(tasks));
+    }
+    function loadTasks(){
+      var saved=localStorage.getItem('cbsehub-tasks');
+      if(!saved) return;
+      try{
+        var tasks=JSON.parse(saved); var html='';
+        tasks.forEach(function(t){
+          var label=t.priority==='high'?'High':t.priority==='medium'?'Med':'Low';
+          html+='<div class="task-item'+(t.completed?' completed':'')+'" onclick="toggleTask(this)"><div class="task-checkbox'+(t.completed?' checked':'')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><span class="task-text">'+escapeHtml(t.text)+'</span><span class="task-priority '+t.priority+'">'+label+'</span></div>';
+        });
+        document.getElementById('tasksList').innerHTML=html;
+      }catch(e){}
+    }
+    loadTasks();
+
+    /* ═══════════════════════════════════
+       INLINE GOAL MODAL (3 independent)
+       ═══════════════════════════════════ */
+    var currentGoalType = '';
+    var goalConfig = {
+      achieve:  { title:'What to Achieve', label:'Goal', placeholder:'e.g. Finish Organic Chemistry in 3 days', key:'cbsehub-goal-achieve', elId:'goalAchieve' },
+      focus:    { title:"Today's Focus", label:'Focus', placeholder:'e.g. Sn1/Sn2 mechanisms', key:'cbsehub-goal-focus', elId:'goalFocus' },
+      reminder: { title:'Set a Reminder', label:'Reminder', placeholder:'e.g. Practice naming at 4 PM', key:'cbsehub-goal-reminder', elId:'goalReminder' }
+    };
+    function openInlineModal(type){
+      currentGoalType=type;
+      var cfg=goalConfig[type];
+      document.getElementById('goalModalTitle').textContent=cfg.title;
+      document.getElementById('goalModalLabel').textContent=cfg.label;
+      var inp=document.getElementById('goalModalInput');
+      inp.placeholder=cfg.placeholder;
+      var current=document.getElementById(cfg.elId).textContent;
+      inp.value=(current==='Not set')?'':current;
+      document.getElementById('goalInlineModal').classList.add('active');
+      setTimeout(function(){inp.focus();},100);
+    }
+    function closeInlineModal(){ document.getElementById('goalInlineModal').classList.remove('active'); currentGoalType=''; }
+    function saveInlineGoal(){
+      var val=document.getElementById('goalModalInput').value.trim();
+      if(!val) return;
+      var cfg=goalConfig[currentGoalType];
+      var el=document.getElementById(cfg.elId);
+      el.textContent=val;
+      el.classList.remove('not-set');
+      localStorage.setItem(cfg.key,val);
+      closeInlineModal();
+    }
+    document.getElementById('goalModalInput').addEventListener('keydown',function(e){
+      if(e.key==='Enter') saveInlineGoal();
+      if(e.key==='Escape') closeInlineModal();
+    });
+
+    /* load saved goals */
+    (function(){
+      ['achieve','focus','reminder'].forEach(function(type){
+        var cfg=goalConfig[type];
+        var saved=localStorage.getItem(cfg.key);
+        if(saved){
+          var el=document.getElementById(cfg.elId);
+          el.textContent=saved; el.classList.remove('not-set');
+        }
+      });
+    })();
+
+    /* ═══════════════════════════════════
+       POMODORO TIMER
+       ═══════════════════════════════════ */
+    var timerState={ focusMin:25,shortMin:5,longMin:15,rounds:4,currentRound:1,totalSeconds:25*60,remainingSeconds:25*60,isRunning:false,isBreak:false,intervalId:null };
+    var CIRCUMFERENCE=2*Math.PI*88;
+
+    function updateTimerDisplay(){
+      var min=Math.floor(timerState.remainingSeconds/60);
+      var sec=timerState.remainingSeconds%60;
+      document.getElementById('timerTime').textContent=(min<10?'0':'')+min+':'+(sec<10?'0':'')+sec;
+      var progress=timerState.totalSeconds>0?timerState.remainingSeconds/timerState.totalSeconds:0;
+      document.getElementById('timerRing').style.strokeDasharray=CIRCUMFERENCE;
+      document.getElementById('timerRing').style.strokeDashoffset=CIRCUMFERENCE*(1-progress);
+      document.getElementById('timerRing').style.stroke=timerState.isBreak?'var(--green)':'var(--accent)';
+    }
+    function toggleTimer(){ timerState.isRunning?pauseTimer():startTimer(); }
+    function startTimer(){
+      timerState.isRunning=true;
+      document.getElementById('playIcon').style.display='none';
+      document.getElementById('pauseIcon').style.display='block';
+      document.getElementById('timerBtnText').textContent='Pause';
+      document.getElementById('timerStateLabel').textContent=timerState.isBreak?'On a break':'Focusing...';
+      timerState.intervalId=setInterval(function(){
+        timerState.remainingSeconds--;
+        updateTimerDisplay(); updatePageTitle();
+        if(timerState.remainingSeconds<=0){ clearInterval(timerState.intervalId); timerState.isRunning=false; timerComplete(); }
+      },1000);
+    }
+    function pauseTimer(){
+      timerState.isRunning=false; clearInterval(timerState.intervalId);
+      document.getElementById('playIcon').style.display='block';
+      document.getElementById('pauseIcon').style.display='none';
+      document.getElementById('timerBtnText').textContent='Resume';
+      document.getElementById('timerStateLabel').textContent=timerState.isBreak?'Break paused':'Paused';
+      document.title='CBSEHub — Dashboard';
+    }
+    function resetTimer(){
+      clearInterval(timerState.intervalId); timerState.isRunning=false; timerState.isBreak=false; timerState.currentRound=1;
+      timerState.totalSeconds=timerState.focusMin*60; timerState.remainingSeconds=timerState.focusMin*60;
+      document.getElementById('playIcon').style.display='block';
+      document.getElementById('pauseIcon').style.display='none';
+      document.getElementById('timerBtnText').textContent='Start Session';
+      document.getElementById('timerStateLabel').textContent='Ready to focus';
+      document.getElementById('timerSubject').textContent='Ready for today\'s session?';
+      document.title='CBSEHub — Dashboard';
+      updateTimerDisplay();
+    }
+    function timerComplete(){
+      if(!timerState.isBreak){
+        // Track focus time
+        var mins=timerState.focusMin;
+        var today=new Date().toDateString();
+        var stored=JSON.parse(localStorage.getItem('cbsehub-focus-time')||'{}');
+        if(stored.date!==today) stored={date:today,minutes:0};
+        stored.minutes+=mins;
+        localStorage.setItem('cbsehub-focus-time',JSON.stringify(stored));
+        updateFocusTimeDisplay();
+
+        // Increment streak
+        var streakData=JSON.parse(localStorage.getItem('cbsehub-streak')||'{}');
+        var yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
+        if(streakData.lastDate===yesterday.toDateString()){
+          streakData.count=(streakData.count||0)+1;
+        } else if(streakData.lastDate!==today){
+          streakData.count=1;
+        }
+        streakData.lastDate=today;
+        localStorage.setItem('cbsehub-streak',JSON.stringify(streakData));
+        updateStreakDisplay();
+
+        if(timerState.currentRound>=timerState.rounds){
+          timerState.isBreak=true; timerState.totalSeconds=timerState.longMin*60; timerState.remainingSeconds=timerState.longMin*60; timerState.currentRound=1;
+          document.getElementById('timerSubject').textContent='Great work! Take a long break.';
+          document.getElementById('timerStateLabel').textContent='Long break';
+        } else {
+          timerState.isBreak=true; timerState.totalSeconds=timerState.shortMin*60; timerState.remainingSeconds=timerState.shortMin*60;
+          document.getElementById('timerSubject').textContent='Nice session! Short break.';
+          document.getElementById('timerStateLabel').textContent='Short break';
+        }
+      } else {
+        timerState.isBreak=false; timerState.currentRound++;
+        timerState.totalSeconds=timerState.focusMin*60; timerState.remainingSeconds=timerState.focusMin*60;
+        document.getElementById('timerSubject').textContent='Break over — let\'s go again!';
+        document.getElementById('timerStateLabel').textContent='Ready to focus';
+      }
+      document.getElementById('playIcon').style.display='block';
+      document.getElementById('pauseIcon').style.display='none';
+      document.getElementById('timerBtnText').textContent='Start Session';
+      try{new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2LkZeWl4+QjIeGhYJ9cW1ra2VgX1xsa2xlYF9dbGtvZWBeXWxpamVoYV5ea2ppZ2FgXl5ramloZmFgYGBpamloZmFgYGBpamloZmBgYGlqaWhmYGBg').play();}catch(e){}
+      updateTimerDisplay();
+    }
+    function updatePageTitle(){
+      if(!timerState.isRunning) return;
+      var min=Math.floor(timerState.remainingSeconds/60); var sec=timerState.remainingSeconds%60;
+      document.title=(min<10?'0':'')+min+':'+(sec<10?'0':'')+sec+' — '+(timerState.isBreak?'🟢 Break':'🍅 Focus')+' | CBSEHub';
+    }
+    function toggleTimerSettings(){ document.getElementById('timerSettings').classList.toggle('active'); }
+    function adjustTime(type,delta){
+      if(type==='focus'){ timerState.focusMin=Math.max(5,Math.min(120,timerState.focusMin+delta)); document.getElementById('focusTimeVal').textContent=timerState.focusMin; if(!timerState.isRunning&&!timerState.isBreak){timerState.totalSeconds=timerState.focusMin*60;timerState.remainingSeconds=timerState.focusMin*60;updateTimerDisplay();} }
+      else if(type==='short'){ timerState.shortMin=Math.max(1,Math.min(30,timerState.shortMin+delta)); document.getElementById('shortTimeVal').textContent=timerState.shortMin; }
+      else if(type==='long'){ timerState.longMin=Math.max(5,Math.min(60,timerState.longMin+delta)); document.getElementById('longTimeVal').textContent=timerState.longMin; }
+      else if(type==='rounds'){ timerState.rounds=Math.max(2,Math.min(10,timerState.rounds+delta)); document.getElementById('roundsVal').textContent=timerState.rounds; }
+    }
+
+    /* ═══════════════════════════════════
+       STREAK — starts at 0, increments on focus complete
+       ═══════════════════════════════════ */
+    function updateStreakDisplay(){
+      var streakData=JSON.parse(localStorage.getItem('cbsehub-streak')||'{}');
+      var count=streakData.count||0;
+      var numEl=document.getElementById('streakNumber');
+      numEl.innerHTML='<span class="streak-fire">🔥</span> '+count;
+      if(count>0){
+        numEl.classList.add('active');
+        document.getElementById('streakText').textContent="Don't break the chain!";
+        document.getElementById('streakSub').textContent=count+' day'+(count>1?'s':'')+' in a row';
+      }
+      // dots
+      var dotsHtml='';
+      var today=new Date();
+      for(var i=6;i>=0;i--){
+        var d=new Date(today); d.setDate(d.getDate()-i);
+        var isToday=(i===0);
+        var isDone=(streakData.lastDate===d.toDateString()&&(i===0))||(i<0);
+        // Simple: last N completed days
+        if(i<count && i>0) dotsHtml+='<div class="streak-dot done"></div>';
+        else if(isToday) dotsHtml+='<div class="streak-dot today"></div>';
+        else dotsHtml+='<div class="streak-dot"></div>';
+      }
+      document.getElementById('streakDots').innerHTML=dotsHtml;
+    }
+    updateStreakDisplay();
+
+    /* ═══════════════════════════════════
+       FOCUS TIME TODAY
+       ═══════════════════════════════════ */
+    function updateFocusTimeDisplay(){
+      var stored=JSON.parse(localStorage.getItem('cbsehub-focus-time')||'{}');
+      var today=new Date().toDateString();
+      var mins=0;
+      if(stored.date===today) mins=stored.minutes||0;
+      var display=mins>=60?Math.floor(mins/60)+'h '+mins%60+'m':mins+'m';
+      document.getElementById('focusTimeToday').textContent=display;
+    }
+    updateFocusTimeDisplay();
+
+    /* ═══════════════════════════════════
+       REMINDERS — starts empty, persisted
+       ═══════════════════════════════════ */
+    function openReminderModal(){ document.getElementById('reminderModal').classList.add('active'); }
+    function closeReminderModal(){ document.getElementById('reminderModal').classList.remove('active'); }
+    function saveReminder(){
+      var text=document.getElementById('reminderInput').value.trim();
+      var tag=document.getElementById('reminderTag').value;
+      var when=document.getElementById('reminderWhen').value.trim();
+      if(!text) return;
+      var tagLabels={purple:'Physics',red:'Biology',blue:'Maths',green:'Chemistry'};
+      var reminders=JSON.parse(localStorage.getItem('cbsehub-reminders')||'[]');
+      reminders.push({tag:tag,tagText:tagLabels[tag]||'Other',text:text,time:when||'Today'});
+      localStorage.setItem('cbsehub-reminders',JSON.stringify(reminders));
+      document.getElementById('reminderInput').value='';
+      document.getElementById('reminderWhen').value='';
+      closeReminderModal();
+      renderReminders();
+    }
+    function deleteReminder(idx){
+      var reminders=JSON.parse(localStorage.getItem('cbsehub-reminders')||'[]');
+      reminders.splice(idx,1);
+      localStorage.setItem('cbsehub-reminders',JSON.stringify(reminders));
+      renderReminders();
+    }
+    function renderReminders(){
+      var reminders=JSON.parse(localStorage.getItem('cbsehub-reminders')||'[]');
+      var container=document.getElementById('reminderList');
+      if(reminders.length===0){
+        container.innerHTML='<div class="reminder-empty">No reminders yet. Add one to stay on track.</div>';
+        return;
+      }
+      var html='<div class="reminder-list">';
+      reminders.forEach(function(r,i){
+        html+='<div class="reminder-item"><span class="reminder-tag '+r.tag+'">'+escapeHtml(r.tagText)+'</span><span class="reminder-text">'+escapeHtml(r.text)+'</span><span class="reminder-time">'+escapeHtml(r.time)+'</span><button class="reminder-del" onclick="deleteReminder('+i+')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>';
+      });
+      html+='</div>';
+      container.innerHTML=html;
+    }
+    renderReminders();
+
+    /* ═══════════════════════════════════
+       RECENTLY VIEWED — from localStorage
+       ═══════════════════════════════════ */
+    function renderRecentlyViewed(){
+      var recent=JSON.parse(localStorage.getItem('cbsehub-recent')||'[]');
+      var container=document.getElementById('recentGrid');
+      if(recent.length===0){
+        container.innerHTML='<div class="recent-empty">No recently viewed resources yet. Browse resources to see them here.</div>';
+        return;
+      }
+      var html='';
+      recent.slice(0,6).forEach(function(r){
+        var iconClass=r.type==='video'?'vid':r.type==='pdf'?'doc':'book';
+        var timeAgo=getTimeAgo(r.timestamp);
+        html+='<a class="recent-card" href="'+escapeHtml(r.url||'#')+'" '+(r.url?'target="_blank"':'')+'><div class="recent-icon '+iconClass+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="recent-title">'+escapeHtml(r.title)+'</div><div class="recent-meta">'+escapeHtml(r.subject||'')+' · '+timeAgo+'</div></a>';
+      });
+      container.innerHTML=html;
+    }
+    function getTimeAgo(ts){
+      var diff=Date.now()-ts;
+      var mins=Math.floor(diff/60000);
+      if(mins<1) return 'Just now';
+      if(mins<60) return mins+'m ago';
+      var hrs=Math.floor(mins/60);
+      if(hrs<24) return hrs+'h ago';
+      var days=Math.floor(hrs/24);
+      return days+'d ago';
+    }
+    renderRecentlyViewed();
+
+    /* Also check periodically for updates from the resources page */
+    setInterval(renderRecentlyViewed, 3000);
+
+    /* ═══════════════════════════════════
+       MODAL CLOSE ON OVERLAY
+       ═══════════════════════════════════ */
+    document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+      overlay.addEventListener('click',function(e){ if(e.target===overlay) overlay.classList.remove('active'); });
+    });
+
+    updateTimerDisplay();
+  </script>
+</body>
+</html>
