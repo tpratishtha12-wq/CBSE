@@ -462,10 +462,7 @@
         <div class="screen active" id="screen-landing" style="padding:1.75rem 2.5rem 2.5rem">
           <div class="page-header">
             <h1>Resources &amp; Notes</h1>
- 
-            <p>Continue from where you left off, then browse subjects below or use the sidebar to jump straight in.</p>
-     <p>Continue from where you left off, or use the sidebar to jump to a subject instantly.</p>
-
+            <p>Browse by subject below, or use the sidebar to jump straight in.</p>
           </div>
           <div id="landingContent"></div>
         </div>
@@ -1152,11 +1149,6 @@ document.addEventListener('DOMContentLoaded', function () {
     dash.querySelectorAll('.recent-mini-item').forEach(function(link){
       link.addEventListener('click', function(){
         openModal(link.getAttribute('data-title'), link.getAttribute('data-url'), link.getAttribute('data-type') || 'notes');
- codex/enhance-user-interface-for-study-platform-s2ko5w
-
- codex/enhance-user-interface-for-study-platform-5wi92t
-
- main
       });
     });
 
@@ -1179,10 +1171,9 @@ document.addEventListener('DOMContentLoaded', function () {
           '<span class="sc-arrow">→</span>';
         card.addEventListener('click', function () { pickSubject(subj); });
         subjRow.appendChild(card);
-main
       });
+      content.appendChild(subjRow);
     });
-
   }
 
   /* ══════════ SIDEBAR ══════════ */
