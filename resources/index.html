@@ -115,6 +115,17 @@
     .addon-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1rem;display:flex;flex-direction:column;gap:.45rem}
     .addon-card h3{font-size:.82rem;font-weight:600;color:var(--text)}
     .addon-card p{font-size:.72rem;color:var(--muted);line-height:1.5}
+    .addon-list{margin-top:.2rem;padding-left:1rem;display:flex;flex-direction:column;gap:.32rem}
+    .addon-list li{font-size:.72rem;color:var(--muted);line-height:1.45}
+    .addon-highlight{margin-top:.2rem;padding:.55rem .65rem;border-radius:9px;background:var(--surface-2);border:1px solid var(--border);font-size:.78rem;color:var(--text);line-height:1.45}
+    .addon-actions{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.15rem}
+    .addon-btn{border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:.68rem;padding:.36rem .55rem;border-radius:8px;cursor:pointer;transition:border-color .14s,transform .14s}
+    .addon-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+    .addon-history{display:flex;flex-direction:column;gap:.36rem;margin-top:.1rem}
+    .addon-history-item{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.38rem .45rem;border-radius:8px;background:var(--surface-2);border:1px solid var(--border)}
+    .addon-history-link{font-size:.72rem;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:82%}
+    .addon-history-link:hover{color:var(--accent-2)}
+    .addon-history-count{font-size:.64rem;color:var(--muted-2)}
     .addon-badge{display:inline-flex;align-items:center;gap:.35rem;width:max-content;padding:.22rem .5rem;border-radius:999px;background:var(--accent-soft);border:1px solid rgba(99,102,241,.25);color:var(--accent-2);font-size:.62rem;font-weight:600;letter-spacing:.02em}
     .addon-link{margin-top:auto;font-size:.7rem;color:var(--accent-2);text-decoration:none}
     .addon-link:hover{text-decoration:underline}
@@ -753,6 +764,69 @@ document.addEventListener('DOMContentLoaded', function () {
   function getShareUrl(title, url, resType) {
     return 'https://cbse-study-hub.vercel.app' + getResourcePath(title, url, resType);
   }
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  var RECENT_VIEWS_KEY = 'studyhub_recent_views_v1';
+  function isPdfLikeType(type) {
+    return ['notes', 'pyqs', 'markingscheme'].indexOf((type || '').toLowerCase()) !== -1;
+  }
+  function readRecentViews() {
+    try { return JSON.parse(localStorage.getItem(RECENT_VIEWS_KEY) || '[]'); } catch(e) { return []; }
+  }
+  function writeRecentViews(items) {
+    try { localStorage.setItem(RECENT_VIEWS_KEY, JSON.stringify(items)); } catch(e) {}
+  }
+  function recordResourceView(item) {
+    if (!item || !item.url) return;
+    var views = readRecentViews();
+    var idx = views.findIndex(function(v) { return v.url === item.url; });
+    var now = Date.now();
+    if (idx > -1) {
+      views[idx].views = (views[idx].views || 0) + 1;
+      views[idx].lastViewedAt = now;
+      views[idx].title = item.title || views[idx].title;
+      views[idx].subject = item.subject || views[idx].subject;
+      views[idx].resType = item.resType || views[idx].resType;
+    } else {
+      views.push({
+        title: item.title || 'Untitled',
+        url: item.url,
+        resType: item.resType || 'notes',
+        subject: item.subject || '',
+        views: 1,
+        lastViewedAt: now
+      });
+    }
+    views.sort(function(a, b) { return (b.lastViewedAt || 0) - (a.lastViewedAt || 0); });
+    writeRecentViews(views.slice(0, 120));
+  }
+  function getMostViewedPdfNotesForSubject(subj, limit) {
+    return readRecentViews()
+      .filter(function(v) { return v.subject === subj && isPdfLikeType(v.resType); })
+      .sort(function(a, b) {
+        if ((b.views || 0) !== (a.views || 0)) return (b.views || 0) - (a.views || 0);
+        return (b.lastViewedAt || 0) - (a.lastViewedAt || 0);
+      })
+      .slice(0, limit || 4);
+  }
+  function getMostRecentForSubject(subj) {
+    return readRecentViews()
+      .filter(function(v) { return v.subject === subj; })
+      .sort(function(a, b) { return (b.lastViewedAt || 0) - (a.lastViewedAt || 0); })[0] || null;
+  }
+  function pickRandomResource(data, keys) {
+    var pool = [];
+    keys.forEach(function(k) { (data[k] || []).forEach(function(it){ pool.push({ title: it.title, link: it.link, type: k }); }); });
+    if (!pool.length) return null;
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
 
   /* ══════════ VIEWER PANEL ══════════ */
   var _vpUrl = '';
@@ -796,6 +870,7 @@ document.addEventListener('DOMContentLoaded', function () {
     _vpSubj = currentSubj || '';
     _vpResType = resType || '';
     _vpShareUrl = getShareUrl(title, url, resType);
+    recordResourceView({ title: title, url: url, resType: resType || 'notes', subject: _vpSubj });
 
     // Update picker button label
     document.getElementById('vpPickerLabel').textContent = title;
@@ -1043,34 +1118,124 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var totalResources = 0;
     resTypeOrder.forEach(function(k) { totalResources += (data[k] || []).length; });
-    [
+    var daySeed = (new Date().getUTCDate() + new Date().getUTCMonth() + new Date().getUTCFullYear()) % 100;
+    var quoteBank = [
+      'Discipline beats motivation on the days you least feel like studying.',
+      'Small daily wins compound into rank-changing results.',
+      'Focus on progress, not perfection.',
+      'Your revision routine is your superpower before boards.'
+    ];
+    var formulaBank = {
+      'Physics': 'v = u + at,  s = ut + ½at²,  F = ma',
+      'Chemistry': 'Molarity (M) = moles of solute / litres of solution',
+      'Mathematics': '(a + b)² = a² + 2ab + b²',
+      'Biology': 'Photosynthesis: 6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂',
+      'Computer Science': 'Binary search time complexity = O(log n)',
+      'Economics': 'Price Elasticity of Demand = %ΔQd / %ΔP'
+    };
+    var formulaText = formulaBank[subj] || 'Revise 1 key definition, 1 formula, and 1 solved example today.';
+    var todayQuote = quoteBank[daySeed % quoteBank.length];
+    var notesCount = (data.notes || []).length;
+    var pyqCount = (data.pyqs || []).length;
+    var videosCount = (data.videos || []).length;
+    var recentTop = getMostViewedPdfNotesForSubject(subj, 4);
+    var lastViewed = getMostRecentForSubject(subj);
+    var planSteps = [
+      '20 min: quick recap of last session',
+      '45 min: concept building from notes',
+      '30 min: PYQ practice (' + (pyqCount ? 'pick 2-3 questions' : 'use chapter worksheet') + ')',
+      '15 min: error log + tomorrow targets'
+    ];
+
+    var cards = [
+      {
+        badge: "Today's Formula",
+        title: subj + ' formula of the day',
+        body: '<div class="addon-highlight">' + formulaText + '</div>'
+      },
+      {
+        badge: 'Motivation',
+        title: 'Daily study quote',
+        body: '<p>"' + todayQuote + '"</p><a class="addon-link" href="javascript:void(0)">Save to dashboard →</a>'
+      },
+      {
+        badge: 'Curated Plan',
+        title: 'Suggested 2-hour study plan',
+        body:
+          '<ul class="addon-list">' +
+            planSteps.map(function(step){ return '<li>' + step + '</li>'; }).join('') +
+          '</ul>' +
+          '<div class="addon-actions">' +
+            '<button class="addon-btn" data-action="start-plan">Start now</button>' +
+            '<button class="addon-btn" data-action="open-pyq">Open a PYQ</button>' +
+          '</div>'
+      },
+      {
+        badge: 'Recent Activity',
+        title: 'Most viewed PDFs / Notes',
+        body: recentTop.length
+          ? (
+            '<div class="addon-history">' +
+              recentTop.map(function(item, idx){
+                return '<div class="addon-history-item">' +
+                  '<a class="addon-history-link" href="javascript:void(0)" data-action="open-recent" data-ridx="' + idx + '">' + escHtml(item.title) + '</a>' +
+                  '<span class="addon-history-count">' + item.views + ' views</span>' +
+                '</div>';
+              }).join('') +
+            '</div>'
+          )
+          : '<p>No viewed PDFs yet. Open a note/PYQ and it will appear here.</p>'
+      },
       {
         badge: 'Subject Snapshot',
-        title: subj + ' at a glance',
-        desc: totalResources + ' total resources currently available for this subject. Keep this panel for quick stats/widgets.',
-        linkLabel: 'Configure widget'
-      },
-      {
-        badge: 'Planner',
-        title: 'Weekly Study Plan',
-        desc: 'Use this area for smart planners, reminders, or streak integrations specific to ' + subj + '.',
-        linkLabel: 'Open planner'
-      },
-      {
-        badge: 'Shortcuts',
-        title: 'Fast Actions',
-        desc: 'Perfect spot for custom tools like formula sheets, timers, or AI doubt helpers without cluttering resource lists.',
-        linkLabel: 'Manage shortcuts'
+        title: 'Available resources',
+        body:
+          '<ul class="addon-list">' +
+            '<li>Total items: ' + totalResources + '</li>' +
+            '<li>Notes: ' + notesCount + '</li>' +
+            '<li>PYQs: ' + pyqCount + '</li>' +
+            '<li>Videos: ' + videosCount + '</li>' +
+          '</ul>' +
+          '<div class="addon-actions">' +
+            '<button class="addon-btn" data-action="open-latest"' + (lastViewed ? '' : ' disabled') + '>' + (lastViewed ? 'Resume last viewed' : 'No recent file yet') + '</button>' +
+            '<button class="addon-btn" data-action="open-random">Open random resource</button>' +
+          '</div>'
       }
-    ].forEach(function(card) {
+    ];
+
+    cards.forEach(function(card) {
       var el = document.createElement('article');
       el.className = 'addon-card';
       el.innerHTML =
         '<span class="addon-badge">' + card.badge + '</span>' +
         '<h3>' + card.title + '</h3>' +
-        '<p>' + card.desc + '</p>' +
-        '<a class="addon-link" href="javascript:void(0)">' + card.linkLabel + ' →</a>';
+        card.body;
       addonsWrap.appendChild(el);
+    });
+    addonsWrap.querySelectorAll('[data-action]').forEach(function(node) {
+      node.addEventListener('click', function(e) {
+        e.preventDefault();
+        var action = node.getAttribute('data-action');
+        if (action === 'start-plan') { setCompletePane('resources'); return; }
+        if (action === 'open-pyq') {
+          var pyq = (data.pyqs || [])[0];
+          if (pyq) openModal(pyq.title, pyq.link, 'pyqs');
+          return;
+        }
+        if (action === 'open-recent') {
+          var item = recentTop[parseInt(node.getAttribute('data-ridx'), 10)];
+          if (item) openModal(item.title, item.url, item.resType);
+          return;
+        }
+        if (action === 'open-latest' && lastViewed) {
+          openModal(lastViewed.title, lastViewed.url, lastViewed.resType);
+          return;
+        }
+        if (action === 'open-random') {
+          var randomPick = pickRandomResource(data, ['notes', 'pyqs', 'videos', 'playlists', 'markingscheme']);
+          if (randomPick) openModal(randomPick.title, randomPick.link, randomPick.type);
+        }
+      });
     });
 
     resTypeOrder.forEach(function (key) {
