@@ -108,6 +108,7 @@
     .complete-layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:.9rem;align-items:start}
     .complete-pane{animation:fadeUp .16s ease}
     .addons-pane{position:sticky;top:.5rem}
+    .pane-title{font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:0 0 .45rem .2rem}
     .addons-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
     .addon-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1rem;display:flex;flex-direction:column;gap:.45rem}
     .addon-card h3{font-size:.82rem;font-weight:600;color:var(--text)}
@@ -439,9 +440,11 @@
           <button class="screen-back" id="completeBack">← Back</button>
           <div class="complete-layout">
             <div class="complete-pane" id="completePaneResources">
+              <p class="pane-title">Resources</p>
               <div class="rt-accordion" id="rtAccordion"></div>
             </div>
             <div class="complete-pane addons-pane" id="completePaneAddons">
+              <p class="pane-title">Study Add-ons</p>
               <div class="addons-wrap" id="addonsWrap"></div>
             </div>
           </div>
