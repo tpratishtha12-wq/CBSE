@@ -111,6 +111,10 @@
     .complete-pane{animation:fadeUp .16s ease}
     .addons-pane{position:sticky;top:.5rem}
     .pane-title{font-size:.66rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);margin:0 0 .45rem .2rem}
+codex/resolve-ui-layout-merge-conflict-1ygiwh
+    #screen-complete.addons-only .complete-layout{grid-template-columns:minmax(0,1fr)}
+    #screen-complete.addons-only #completePaneResources{display:none}
+ main
     .addons-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.75rem}
     .addon-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:1rem;display:flex;flex-direction:column;gap:.45rem}
     .addon-card h3{font-size:.82rem;font-weight:600;color:var(--text)}
@@ -560,6 +564,8 @@ document.addEventListener('DOMContentLoaded', function () {
     playlists: { icon:'▶️', title:'Playlists', desc:'Curated YouTube playlists — one-shots, detailed lectures & PYQ walkthroughs.' },
   };
   var resTypeOrder = ['notes','pyqs','videos','playlists'];
+  var sidebarModeOrder = ['notes','pyqs','videos'];
+
 
 
   var chapterData = {
@@ -942,7 +948,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (s === 'screen-complete' && currentSubj) {
       var m = subjectMeta[currentSubj] || { icon:'📚' };
       updateBreadcrumb([{ label: currentSubj, icon: m.icon, current: true }]);
-      buildComplete(currentSubj);
+      buildComplete(currentSubj, 'notes');
+      document.getElementById('screen-complete').classList.remove('addons-only');
       showScreen('screen-complete', true);
     } else {
       clearHero(); showScreen('screen-landing', true);
@@ -970,7 +977,7 @@ document.addEventListener('DOMContentLoaded', function () {
           '<p class="sc-name">' + subj + '</p>' +
           '<p class="sc-desc">' + m.desc + '</p>' +
           '<span class="sc-arrow">→</span>';
-        card.addEventListener('click', function () { pickSubject(subj); });
+        card.addEventListener('click', function () { pickSubject(subj, 'addons'); });
         subjRow.appendChild(card);
       });
       content.appendChild(subjRow);
@@ -996,15 +1003,42 @@ document.addEventListener('DOMContentLoaded', function () {
         subjBtn.innerHTML =
           '<span class="ico">' + m.icon + '</span>' +
           '<span class="sb-subj-name">' + subj + '</span>';
-        subjBtn.addEventListener('click', function () { pickSubject(subj); });
+        subjBtn.addEventListener('click', function () { pickSubject(subj, 'addons'); });
         nav.appendChild(subjBtn);
+
+        var modes = document.createElement('div');
+        modes.className = 'sb-modes';
+        sidebarModeOrder.forEach(function(modeKey) {
+          var rt = resTypeMeta[modeKey];
+          var modeBtn = document.createElement('button');
+          modeBtn.className = 'sb-mode-btn';
+          modeBtn.id = 'sb-mode-' + subj.replace(/\s/g, '-') + '-' + modeKey;
+          modeBtn.innerHTML = '<span class="sb-mode-ico">' + rt.icon + '</span><span>' + rt.title + '</span>';
+          modeBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            pickSubject(subj, modeKey);
+          });
+          modes.appendChild(modeBtn);
+        });
+        nav.appendChild(modes);
       });
       inner.appendChild(nav);
     });
   }
 
+  function setSidebarSelection(subj, modeKey) {
+    document.querySelectorAll('.sb-subj').forEach(function (b) { b.classList.remove('open'); });
+    document.querySelectorAll('.sb-mode-btn').forEach(function (b) { b.classList.remove('active'); });
+    var subjSbBtn = document.getElementById('sb-subj-' + subj.replace(/\s/g, '-'));
+    if (subjSbBtn) subjSbBtn.classList.add('open');
+    if (modeKey) {
+      var modeBtn = document.getElementById('sb-mode-' + subj.replace(/\s/g, '-') + '-' + modeKey);
+      if (modeBtn) modeBtn.classList.add('active');
+    }
+  }
+
   /* ══════════ PICK SUBJECT → straight to resources ══════════ */
-  function pickSubject(subj) {
+  function pickSubject(subj, focusKey) {
     // Close PDF viewer if open when switching subjects
     var vp = document.getElementById('viewerPanel');
     if (vp.classList.contains('open')) {
@@ -1020,11 +1054,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     currentSubj = subj;
     var m = subjectMeta[subj] || { icon:'📚' };
-    document.querySelectorAll('.sb-subj').forEach(function (b) { b.classList.remove('open'); });
-    var subjSbBtn = document.getElementById('sb-subj-' + subj.replace(/\s/g, '-'));
-    if (subjSbBtn) subjSbBtn.classList.add('open');
+    var activeFocus = focusKey || 'addons';
+    setSidebarSelection(subj, activeFocus === 'addons' ? null : activeFocus);
     updateBreadcrumb([{ label: subj, icon: m.icon, current: true }]);
+ codex/resolve-ui-layout-merge-conflict-1ygiwh
+    buildComplete(subj, activeFocus === 'addons' ? null : activeFocus);
+    document.getElementById('screen-complete').classList.toggle('addons-only', activeFocus === 'addons');
+
     buildComplete(subj);
+ main
     showScreen('screen-complete');
   }
 
@@ -1036,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return row;
   }
 
-  function buildComplete(subj) {
+  function buildComplete(subj, focusKey) {
     var data = appData[subj] || {};
     var acc  = document.getElementById('rtAccordion');
     var addonsWrap = document.getElementById('addonsWrap');
@@ -1118,7 +1156,7 @@ document.addEventListener('DOMContentLoaded', function () {
     resTypeOrder.forEach(function (key) {
       var rt    = resTypeMeta[key];
       var files = data[key] || [];
-      var item  = document.createElement('div'); item.className = 'rt-item';
+      var item  = document.createElement('div'); item.className = 'rt-item'; item.id = 'rt-item-' + key;
       var hdr   = document.createElement('div'); hdr.className = 'rt-header';
       var body  = document.createElement('div'); body.className = 'rt-files';
 
@@ -1310,8 +1348,9 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       hdr.addEventListener('click', function () { item.classList.toggle('expanded'); });
       item.appendChild(hdr); item.appendChild(body); acc.appendChild(item);
-      // Auto-expand playlists when they have content
-      if (key === 'playlists' && files.length) item.classList.add('expanded');
+      // Auto-expand requested section; fallback to playlists when present
+      if (focusKey && key === focusKey) item.classList.add('expanded');
+      else if (!focusKey && key === 'playlists' && files.length) item.classList.add('expanded');
     });
   }
 
@@ -1471,7 +1510,7 @@ document.addEventListener('DOMContentLoaded', function () {
     searchInputSb.focus();
   });
   document.getElementById('completeBack').addEventListener('click', function () {
-    clearHero(); currentSubj = null; showScreen('screen-landing');
+    clearHero(); currentSubj = null; document.getElementById('screen-complete').classList.remove('addons-only'); showScreen('screen-landing');
   });
 
   /* ══════════ SIDEBAR RESIZE ══════════ */
@@ -1549,7 +1588,8 @@ document.addEventListener('DOMContentLoaded', function () {
       appData = data;
       // If a subject screen is already open, rebuild it with fresh data
       if (currentSubj && document.getElementById('screen-complete').classList.contains('active')) {
-        buildComplete(currentSubj);
+        buildComplete(currentSubj, 'notes');
+        document.getElementById('screen-complete').classList.remove('addons-only');
       }
     })
     .catch(function(){ appData = mockData; });
