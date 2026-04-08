@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -559,8 +560,6 @@ document.addEventListener('DOMContentLoaded', function () {
     playlists: { icon:'▶️', title:'Playlists', desc:'Curated YouTube playlists — one-shots, detailed lectures & PYQ walkthroughs.' },
   };
   var resTypeOrder = ['notes','pyqs','videos','playlists'];
-  var sidebarModeOrder = ['notes','pyqs','videos'];
-
 
 
   var chapterData = {
@@ -943,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (s === 'screen-complete' && currentSubj) {
       var m = subjectMeta[currentSubj] || { icon:'📚' };
       updateBreadcrumb([{ label: currentSubj, icon: m.icon, current: true }]);
-      buildComplete(currentSubj, 'notes');
+      buildComplete(currentSubj);
       showScreen('screen-complete', true);
     } else {
       clearHero(); showScreen('screen-landing', true);
@@ -999,40 +998,13 @@ document.addEventListener('DOMContentLoaded', function () {
           '<span class="sb-subj-name">' + subj + '</span>';
         subjBtn.addEventListener('click', function () { pickSubject(subj); });
         nav.appendChild(subjBtn);
-
-        var modes = document.createElement('div');
-        modes.className = 'sb-modes';
-        sidebarModeOrder.forEach(function(modeKey) {
-          var rt = resTypeMeta[modeKey];
-          var modeBtn = document.createElement('button');
-          modeBtn.className = 'sb-mode-btn';
-          modeBtn.id = 'sb-mode-' + subj.replace(/\s/g, '-') + '-' + modeKey;
-          modeBtn.innerHTML = '<span class="sb-mode-ico">' + rt.icon + '</span><span>' + rt.title + '</span>';
-          modeBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            pickSubject(subj, modeKey);
-          });
-          modes.appendChild(modeBtn);
-        });
-        nav.appendChild(modes);
       });
       inner.appendChild(nav);
     });
   }
 
-  function setSidebarSelection(subj, modeKey) {
-    document.querySelectorAll('.sb-subj').forEach(function (b) { b.classList.remove('open'); });
-    document.querySelectorAll('.sb-mode-btn').forEach(function (b) { b.classList.remove('active'); });
-    var subjSbBtn = document.getElementById('sb-subj-' + subj.replace(/\s/g, '-'));
-    if (subjSbBtn) subjSbBtn.classList.add('open');
-    if (modeKey) {
-      var modeBtn = document.getElementById('sb-mode-' + subj.replace(/\s/g, '-') + '-' + modeKey);
-      if (modeBtn) modeBtn.classList.add('active');
-    }
-  }
-
   /* ══════════ PICK SUBJECT → straight to resources ══════════ */
-  function pickSubject(subj, focusKey) {
+  function pickSubject(subj) {
     // Close PDF viewer if open when switching subjects
     var vp = document.getElementById('viewerPanel');
     if (vp.classList.contains('open')) {
@@ -1048,12 +1020,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     currentSubj = subj;
     var m = subjectMeta[subj] || { icon:'📚' };
-    setSidebarSelection(subj, focusKey || null);
+    document.querySelectorAll('.sb-subj').forEach(function (b) { b.classList.remove('open'); });
+    var subjSbBtn = document.getElementById('sb-subj-' + subj.replace(/\s/g, '-'));
+    if (subjSbBtn) subjSbBtn.classList.add('open');
     updateBreadcrumb([{ label: subj, icon: m.icon, current: true }]);
- codex/resolve-ui-layout-merge-conflict-5fkcx9
-    buildComplete(subj, focusKey || 'notes');
     buildComplete(subj);
- main
     showScreen('screen-complete');
   }
 
@@ -1065,7 +1036,7 @@ document.addEventListener('DOMContentLoaded', function () {
     return row;
   }
 
-  function buildComplete(subj, focusKey) {
+  function buildComplete(subj) {
     var data = appData[subj] || {};
     var acc  = document.getElementById('rtAccordion');
     var addonsWrap = document.getElementById('addonsWrap');
@@ -1147,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', function () {
     resTypeOrder.forEach(function (key) {
       var rt    = resTypeMeta[key];
       var files = data[key] || [];
-      var item  = document.createElement('div'); item.className = 'rt-item'; item.id = 'rt-item-' + key;
+      var item  = document.createElement('div'); item.className = 'rt-item';
       var hdr   = document.createElement('div'); hdr.className = 'rt-header';
       var body  = document.createElement('div'); body.className = 'rt-files';
 
@@ -1339,9 +1310,8 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       hdr.addEventListener('click', function () { item.classList.toggle('expanded'); });
       item.appendChild(hdr); item.appendChild(body); acc.appendChild(item);
-      // Auto-expand requested section; fallback to playlists when present
-      if (focusKey && key === focusKey) item.classList.add('expanded');
-      else if (!focusKey && key === 'playlists' && files.length) item.classList.add('expanded');
+      // Auto-expand playlists when they have content
+      if (key === 'playlists' && files.length) item.classList.add('expanded');
     });
   }
 
@@ -1579,7 +1549,7 @@ document.addEventListener('DOMContentLoaded', function () {
       appData = data;
       // If a subject screen is already open, rebuild it with fresh data
       if (currentSubj && document.getElementById('screen-complete').classList.contains('active')) {
-        buildComplete(currentSubj, 'notes');
+        buildComplete(currentSubj);
       }
     })
     .catch(function(){ appData = mockData; });
