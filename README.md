@@ -1,28 +1,16 @@
-<div align="center">
 
-# CBSEHub
+# 📚 CBSE Class 12 Resource Hub
 
-*Your smart Class 12 CBSE study companion.*
+Free, centralized notes, PYQs, and study materials for Class 12 board students.
 
-[Live](https://cbse-study-hub.vercel.app/) · [Report Bug](mailto:prattytea@gmail.com) · [Request Feature](mailto:prattytea@gmail.com)
+🌐 **Live website:** https://cbse-study-hub.vercel.app/
 
-</div>
+## Subjects
+Accountancy · Business Studies · Economics · English · Mathematics · Physics · Chemistry · Biology 
 
----
+## Features
+- Notes, PYQs, youtube channels and study materials
+- Fast and free to access
 
-## Overview
-
-CBSEHub is a centralized, open-source repository providing free access to Class 12 board study materials. Designed with a focus on speed, aesthetics, and user experience, it aggregates chapter-wise notes, previous year questions (PYQs), and video lectures across various subjects into one distraction-free platform.
-
-## Key Features
-
-- **Comprehensive Library:** Resources spanning Physics, Chemistry, Mathematics, Biology, Accountancy, Business Studies, Economics, English, and more.
-- **Dynamic Theming:** A highly customizable UI featuring Dark/Light modes and 17 unique accent colors (stored locally to remember user preference).
-- **Serverless Architecture:** Utilizes Vercel Serverless Functions to dynamically parse lightweight text files into structured JSON APIs.
-- **Fast & Free:** Built with pure HTML/CSS/JS for maximum performance, with absolutely no paywalls.
-
-## Tech Stack
-
-- **Frontend:** HTML5, CSS3 (Custom properties, responsive grid/flexbox), Vanilla JavaScript
-- **Backend:** Node.js (Vercel Serverless Functions)
-- **Deployment:** Vercel
+## Contributing
+Contributions are very welcome! prattytea@gmail.com
